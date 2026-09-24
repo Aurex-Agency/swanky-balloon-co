@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import "@fontsource-variable/bricolage-grotesque";
+import "@fontsource-variable/cormorant-garamond";
+import "@fontsource-variable/cormorant-garamond/wght-italic.css";
 import "@fontsource-variable/manrope";
 import "./globals.css";
 import { SiteHeader, SiteFooter } from "@/components/site-shell";
@@ -18,7 +19,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     siteName: brand.name,
-    title: "Swanky Balloon Co. | Make the moment impossible to miss.",
+    title: "Swanky Balloon Co. | A little wonder. A lasting impression.",
     description: brand.description,
     locale: "en_US",
   },

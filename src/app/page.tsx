@@ -6,6 +6,7 @@ import {
   copy,
   portfolio,
   services,
+  balloonMenu,
   processSteps,
   faqs,
   testimonials,
@@ -14,6 +15,7 @@ import { PortfolioArt, BalloonCluster } from "@/components/balloons";
 import { PaletteLab } from "@/components/palette-lab";
 import { Gallery } from "@/components/gallery";
 import { EventLine } from "@/components/event-line";
+import { BrandSeal, Wordmark } from "@/components/wordmark";
 export default function Home() {
   return (
     <>
@@ -35,26 +37,24 @@ export default function Home() {
         <div className="hero-copy">
           <span className="eyebrow">{copy.hero.eyebrow}</span>
           <h1>
-            Make the
+            {copy.hero.lines[0]}
             <br />
-            moment
+            <em>{copy.hero.lines[1]}</em>
             <br />
-            <span className="hero-pink">impossible</span>
-            <br />
-            to miss<span className="pink-text">.</span>
+            {copy.hero.lines[2]}
           </h1>
           <p>{copy.hero.description}</p>
           <div className="hero-actions">
             <Link className="button button-ink" href="/inquire">
-              Start Your Party <ArrowUpRight size={20} />
+              {copy.cta}
+              <ArrowUpRight size={18} />
             </Link>
             <Link className="text-link" href="/gallery">
-              Explore the Gallery <ArrowRight size={18} />
+              View Our Work <ArrowRight size={17} />
             </Link>
           </div>
           <div className="hero-area">
-            <span className="tiny-star">✳</span> Nashville · Brentwood · Middle
-            Tennessee
+            Nashville · Brentwood · Middle Tennessee
           </div>
         </div>
         <div className="hero-collage">
@@ -67,65 +67,38 @@ export default function Home() {
           <div className="hero-third-art">
             <PortfolioArt item={portfolio[2]} />
           </div>
-          <Image
-            className="hero-sticker"
-            src="/swanky/brand/party.png"
-            alt=""
-            width={190}
-            height={190}
-          />
-          <Image
-            className="hero-sparkle"
-            src="/swanky/brand/sparkle.png"
-            alt=""
-            width={115}
-            height={140}
-          />
-          <span className="collage-note">a little extra. a lot of you.</span>
+          <div className="hero-seal">
+            <BrandSeal />
+          </div>
+          <span className="collage-note">
+            Thoughtfully made. Happily celebrated.
+          </span>
         </div>
       </section>
       <EventLine />
       <section className="statement section">
         <div className="statement-art">
-          <PortfolioArt item={portfolio[4]} />
-          <Image
-            src="/swanky/brand/smiley.png"
-            width={120}
-            height={120}
-            alt=""
-            className="statement-sticker"
-          />
+          <PortfolioArt item={portfolio[1]} />
+          <span className="photo-footnote">
+            Pink, ivory & a few delicate details.
+          </span>
         </div>
         <div className="statement-copy">
-          <span className="eyebrow">MORE THAN A PRETTY PARTY</span>
-          <h2>
-            Not your
-            <br />
-            average
-            <br />
-            party backdrop<span className="pink-text">.</span>
-          </h2>
+          <span className="eyebrow">A CELEBRATION THAT FEELS LIKE YOU</span>
+          <h2>{copy.statement.title}</h2>
           <p>{copy.statement.description}</p>
           <Link href="/inquire" className="text-link">
-            Let’s dream something up <ArrowUpRight size={20} />
+            Tell us what you’re imagining <ArrowUpRight size={18} />
           </Link>
         </div>
       </section>
       <section className="services-section section" id="services">
         <div className="section-heading">
           <div>
-            <span className="eyebrow">WHAT CAN WE CREATE?</span>
-            <h2>
-              Pick the moment.
-              <br />
-              We’ll bring the magic.
-            </h2>
+            <span className="eyebrow">{copy.services.eyebrow}</span>
+            <h2>{copy.services.title}</h2>
           </div>
-          <p>
-            From a little celebration
-            <br />
-            to a can’t-miss statement.
-          </p>
+          <p>{copy.services.description}</p>
         </div>
         <div className="service-grid">
           {services.map((s, i) => (
@@ -135,26 +108,26 @@ export default function Home() {
               key={s.title}
             >
               <div className="service-number">
-                <span>({s.number})</span>
-                <ArrowUpRight />
+                <span>0{i + 1}</span>
+                <ArrowUpRight size={19} />
               </div>
               <div className={`service-symbol symbol-${i}`} aria-hidden="true">
-                {i === 0 ? (
-                  <BalloonCluster />
-                ) : i === 1 ? (
+                {i === 1 ? (
                   <span className="mini-arches">
                     <i />
                     <i />
                     <i />
                   </span>
-                ) : i === 2 ? (
-                  <span className="big-asterisk">✳</span>
                 ) : (
-                  <span className="big-word">
-                    HEY
-                    <br />
-                    YOU.
-                  </span>
+                  <BalloonCluster
+                    colors={
+                      i === 0
+                        ? ["#8c9aa8", "#f2eee5", "#a7b5a0"]
+                        : i === 2
+                          ? ["#f2eee5", "#b4a18d", "#d2c5a6"]
+                          : ["#d6abb1", "#f2eee5", "#b4a18d"]
+                    }
+                  />
                 )}
               </div>
               <span className="service-tag">{s.tag}</span>
@@ -163,47 +136,64 @@ export default function Home() {
             </Link>
           ))}
         </div>
+        <div className="balloon-menu">
+          <div className="menu-intro">
+            <span className="eyebrow">THE BALLOON MENU</span>
+            <h3>
+              A little something, <br />
+              or the whole room.
+            </h3>
+            <p>{balloonMenu.note}</p>
+          </div>
+          <div>
+            <h3>Pick up & celebrate</h3>
+            <ul>
+              {balloonMenu.pickup.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </div>
+          <div>
+            <h3>Delivered for your occasion</h3>
+            <ul>
+              {balloonMenu.delivery.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </div>
+        </div>
       </section>
       <PaletteLab />
       <section className="portfolio-section section" id="work">
         <div className="section-heading">
           <div>
-            <span className="eyebrow">RECENT MAGIC</span>
-            <h2>
-              Made for the moment.
-              <br />
-              Built for the camera.
-            </h2>
+            <span className="eyebrow">{copy.gallery.eyebrow}</span>
+            <h2>{copy.gallery.title}</h2>
           </div>
-          <p>
-            A peek at the possibilities.
-            <br />
-            Color studies, ready for your story.
-          </p>
+          <p>{copy.gallery.description}</p>
         </div>
-        <Gallery limit={6} />
+        <Gallery />
         <div className="center-action">
           <Link className="button button-outline" href="/gallery">
-            View the Full Gallery <ArrowUpRight size={20} />
+            Explore the Gallery <ArrowUpRight size={18} />
           </Link>
         </div>
       </section>
       <section className="process-section section" id="process">
         <div className="section-heading">
           <div>
-            <span className="eyebrow">HOW IT WORKS</span>
+            <span className="eyebrow">FROM THE FIRST IDEA</span>
             <h2>
-              From “I have an idea”
+              A lovely plan,
               <br />
-              to “this is perfect.”
+              from start to celebration.
             </h2>
           </div>
-          <Image
-            src="/swanky/brand/lightning.png"
-            alt=""
-            width={65}
-            height={95}
-          />
+          <p>
+            Share what you know.
+            <br />
+            We’ll work through the details together.
+          </p>
         </div>
         <div className="process-grid">
           {processSteps.map((s, i) => (
@@ -217,18 +207,17 @@ export default function Home() {
       </section>
       <section className="plan-section section">
         <div>
-          <span className="eyebrow">ALL THE FUN. A CLEAR WAY FORWARD.</span>
+          <span className="eyebrow">ROOM TO ENJOY THE MOMENT</span>
           <h2>
-            One clear plan for
-            <br />
-            your biggest moments.
+            Your vision.
+            <br />A clear way forward.
           </h2>
         </div>
         <div>
           <ul className="benefit-list">
             {copy.benefits.map((b) => (
               <li key={b}>
-                <Check size={20} />
+                <Check size={19} />
                 {b}
               </li>
             ))}
@@ -254,43 +243,38 @@ export default function Home() {
             target="_blank"
             rel="noreferrer"
           >
-            Come along on Instagram <ArrowUpRight size={19} />
+            Follow along on Instagram <ArrowUpRight size={18} />
           </a>
         </div>
         <div className="about-art">
           {brand.founderImage ? (
-            <>
-              <Image
-                src={brand.founderImage}
-                fill
-                sizes="(max-width:700px) 100vw,50vw"
-                alt="The creative behind Swanky Balloon Co."
-              />
-              <span>Meet the creative behind Swanky</span>
-            </>
+            <Image
+              src={brand.founderImage}
+              fill
+              sizes="(max-width:700px) 100vw,50vw"
+              alt="The creative behind Swanky Balloon Co."
+            />
           ) : (
             <>
-              <Image
-                src="/swanky/brand/disco.png"
-                width={390}
-                height={390}
-                alt=""
-              />
-              <span>
-                BIG ON
+              <BrandSeal />
+              <Wordmark />
+              <p>
+                Beautifully personal.
                 <br />
-                GOOD TIMES.
-              </span>
+                Unmistakably Swanky.
+              </p>
             </>
           )}
         </div>
       </section>
       <section className="proof-section section">
-        <span className="eyebrow">MADE TO BE REMEMBERED</span>
+        <span className="eyebrow">GATHER. CELEBRATE. REMEMBER.</span>
         <h2>
-          The kind of moment
+          For the room.
           <br />
-          people keep talking about.
+          For the photographs.
+          <br />
+          <em>For the memories.</em>
         </h2>
         {testimonials.length ? (
           testimonials.map((t) => (
@@ -300,33 +284,30 @@ export default function Home() {
             </blockquote>
           ))
         ) : (
-          <p>
-            Designed to look incredible in the room and even better in the
-            photos.
-          </p>
+          <p>A few of the details from Swanky celebrations.</p>
         )}
         <div className="proof-strip">
-          {[portfolio[1], portfolio[3], portfolio[5]].map((p) => (
+          {portfolio.map((p) => (
             <PortfolioArt item={p} key={p.id} />
           ))}
         </div>
       </section>
       <section className="faq-section section" id="faq">
         <div>
-          <span className="eyebrow">THE PARTY PARTICULARS</span>
+          <span className="eyebrow">BEFORE WE BEGIN</span>
           <h2>
-            Good questions.
+            A few things
             <br />
-            Clear answers.
+            you may be wondering.
           </h2>
-          <p>A little clarity before the confetti.</p>
+          <p>The details, made a little clearer.</p>
         </div>
         <div className="faq-list">
           {faqs.map((f) => (
             <details key={f.question}>
               <summary>
                 {f.question}
-                <Plus size={21} />
+                <Plus size={20} />
               </summary>
               <p>{f.answer}</p>
             </details>
@@ -334,21 +315,16 @@ export default function Home() {
         </div>
       </section>
       <section className="closing section">
-        <span className="eyebrow">HAVE A DATE IN MIND?</span>
+        <span className="eyebrow">AN OCCASION IN MIND?</span>
         <h2>{copy.closing.title}</h2>
         <p>{copy.closing.description}</p>
         <Link href="/inquire" className="button button-ink">
-          Start Your Party <ArrowUpRight size={21} />
+          {copy.cta}
+          <ArrowUpRight size={18} />
         </Link>
-        <Image
-          src="/swanky/brand/cant-pop.png"
-          alt=""
-          width={170}
-          height={170}
-        />
-        <span className="closing-star" aria-hidden="true">
-          ✳
-        </span>
+        <div className="closing-seal">
+          <BrandSeal />
+        </div>
       </section>
     </>
   );

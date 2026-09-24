@@ -10,6 +10,7 @@ import {
   ArrowUpRight,
 } from "lucide-react";
 import {
+  copy,
   eventTypes,
   budgetRanges,
   services,
@@ -27,12 +28,12 @@ import { BalloonCluster } from "./balloons";
 import { PalettePicker } from "./palette-lab";
 const titles = ["The Event", "The Vision", "The Investment", "Your Details"];
 const subtitles = [
-  "First, the reason to celebrate.",
-  "Let’s get a little carried away.",
-  "A little direction goes a long way.",
-  "One last thing. Let’s stay in touch.",
+  "First, the occasion.",
+  "The colors. The details. The feeling.",
+  "A comfortable place to begin.",
+  "A few details, then we’ll be in touch.",
 ];
-const storageKey = "swanky-inquiry-v1";
+const storageKey = "swanky-inquiry-v2";
 export function InquiryPlanner() {
   const [draft, setDraft] = useState<Draft>(emptyDraft);
   const [ready, setReady] = useState(false);
@@ -256,24 +257,17 @@ export function InquiryPlanner() {
   return (
     <div className="planner-layout">
       <aside className="planner-aside">
-        <span className="eyebrow">LET’S MAKE SOMETHING GOOD.</span>
+        <span className="eyebrow">{copy.planner.eyebrow}</span>
         <h1>
-          Your party.
+          Your occasion.
           <br />
-          Your people.
+          <em>Beautifully</em>
           <br />
-          <span className="pink-text">
-            Your kind
-            <br />
-            of extra.
-          </span>
+          considered.
         </h1>
-        <p>
-          A few details now.
-          <br />A whole lot of possibilities next.
-        </p>
+        <p>{copy.planner.description}</p>
         <div className="planner-board">
-          <span className="eyebrow">YOUR PARTY, TAKING SHAPE</span>
+          <span className="eyebrow">YOUR CELEBRATION, TAKING SHAPE</span>
           <BalloonCluster colors={draft.colors} />
           <strong>{draft.vibe}</strong>
           <p>
@@ -367,7 +361,7 @@ export function InquiryPlanner() {
                     />
                   </div>
                   <fieldset className="form-palette">
-                    <legend>What’s the vibe?</legend>
+                    <legend>Your preferred style</legend>
                     <PalettePicker
                       value={{ vibe: draft.vibe, colors: draft.colors }}
                       onChange={(v) => {
@@ -498,7 +492,9 @@ export function InquiryPlanner() {
                     )}
                   </div>
                   <div className="inquiry-summary">
-                    <span className="eyebrow">YOUR PARTY AT A GLANCE</span>
+                    <span className="eyebrow">
+                      YOUR CELEBRATION AT A GLANCE
+                    </span>
                     <dl>
                       <div>
                         <dt>The event</dt>

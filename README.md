@@ -1,6 +1,6 @@
 # Swanky Balloon Co.
 
-A presentation concept for Swanky Balloon Co., built for Aurex Business Labs. Next.js App Router (Webpack production build), TypeScript, Tailwind CSS, locally bundled Bricolage Grotesque and Manrope fonts, Motion, Zod, Playwright and axe.
+A presentation concept for Swanky Balloon Co., built for Aurex Business Labs. Next.js App Router (Webpack production build), TypeScript, Tailwind CSS, locally bundled Cormorant Garamond and Manrope fonts, Motion, Zod, Playwright and axe.
 
 Repository: https://github.com/Aurex-Agency/swanky-balloon-co
 
@@ -34,11 +34,15 @@ Tests cover desktop (1440 × 900) and mobile (390 × 844), gallery filtering and
 
 ## Editable content and images
 
-`src/data/swanky.ts` holds brand details, navigation, service descriptions, portfolio slots, categories, vibes, color swatches, event types, budget ranges, FAQ, process, testimonials, core marketing copy and typed operations mock data. Unverified service and occasion copy is commented for owner confirmation. Interface labels live with their controls.
+`src/data/swanky.ts` holds brand details, navigation, service descriptions, portfolio slots, categories, vibes, color swatches, event types, budget ranges, FAQ, process, testimonials, core marketing copy and typed operations mock data. The service menu follows the owner’s supplied board. Occasion labels, response times and other business policies remain subject to owner confirmation. Interface labels live with their controls.
 
-All nine supplied brand graphics are local in `public/swanky/brand/`. `logo-trim.png` is a lossless transparent-padding crop used for layout. Source graphics are retained. No Instagram scraping or third-party portfolio photography is used.
+The active design follows the owner’s September 2026 brand boards: ivory, dusty blue, sage, taupe and chocolate, with serif typography, thin borders and restrained pinstripes. See `BRAND-ALIGNMENT.md` for sources and implementation choices.
 
-For real portfolio work, add approved files to `public/swanky/portfolio/` and set each item's `image`, `alt`, category and title in the central data file. The card automatically switches from its CSS concept to an optimized Next Image. Set `brand.founderImage` after supplying an approved photo, or keep the brand graphic composition. Supply a behind-the-scenes photo and verified testimonials if available. No fabricated portrait or testimonial is shown.
+Three approved Swanky installation photographs are local in `public/swanky/portfolio/`, extracted from board 8 with user confirmation. They appear in the hero and gallery through optimized Next Image components. Gallery filters describe palettes because event types were not supplied. The lightbox preserves each full photograph. The original nine graphics remain in `public/swanky/brand/` for reference and are no longer displayed.
+
+To add portfolio work, place approved images in `public/swanky/portfolio/` and update the central data file. Set `brand.founderImage` when an approved founder portrait is available; the current about section uses a typographic brand composition. No fabricated portrait or testimonial is shown.
+
+The supplied boards contain no named font family or official hex values. Cormorant Garamond and the website color tokens are interpretations of the visual direction, not claims of exact brand specifications. The wordmark and monogram are web typography inspired by the supplied lockups.
 
 ## Environment
 

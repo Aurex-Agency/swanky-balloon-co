@@ -8,7 +8,7 @@ import {
   Clock,
   FileText,
 } from "lucide-react";
-import { mockLeads } from "@/data/swanky";
+import { mockLeads, vibes } from "@/data/swanky";
 export const metadata: Metadata = {
   title: "Concept CRM Preview",
   robots: { index: false, follow: false },
@@ -45,9 +45,9 @@ export default function OpsPreview() {
         <div>
           <span className="eyebrow">AUREX BUSINESS LABS · SYSTEMS CONCEPT</span>
           <h1>
-            Good parties.
+            Thoughtful celebrations.
             <br />
-            Better organized.
+            Beautifully organized.
           </h1>
           <p>One place for every inquiry, next step and event detail.</p>
         </div>
@@ -113,12 +113,12 @@ export default function OpsPreview() {
                 <i
                   style={{
                     background: [
-                      "#ef2aa8",
-                      "#aaa7f7",
-                      "#ff786c",
-                      "#9ee4df",
-                      "#e7ef2d",
-                      "#b5bcad",
+                      "#8c9aa8",
+                      "#bcb4cd",
+                      "#b4a18d",
+                      "#a7b5a0",
+                      "#d2c5a6",
+                      "#617563",
                     ][i],
                   }}
                 />
@@ -169,9 +169,9 @@ export default function OpsPreview() {
             <div>
               <dt>Palette</dt>
               <dd>
-                Hot pink, lavender, aqua
+                Ivory, dusty blue, sage
                 <div className="color-dots">
-                  {["#ef2aa8", "#aaa7f7", "#9ee4df"].map((c) => (
+                  {vibes[0].colors.map((c) => (
                     <span key={c} style={{ background: c }} />
                   ))}
                 </div>

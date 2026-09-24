@@ -19,7 +19,7 @@ export const brand = {
   instagram: "https://www.instagram.com/swankyballoonco/",
   website: "https://swankyballoon.com",
   description:
-    "Custom balloon art, backdrops, props and event styling for celebrations across Nashville, Brentwood and Middle Tennessee.",
+    "Custom balloon installations, garlands, helium arrangements and event styling in Nashville, Brentwood and Middle Tennessee.",
   contact: { email: null, phone: null },
   founderImage: null as string | null,
 };
@@ -30,119 +30,108 @@ export const navigation = [
   { label: "About", href: "/#about" },
   { label: "FAQ", href: "/#faq" },
 ];
+// Owner-supplied brand boards, September 24, 2026. Board 11 supplies this menu.
 export const services = [
   {
     number: "01",
-    title: "Custom Balloon Art",
+    title: "Custom Installations",
     description:
-      "Statement-making balloon designs shaped around the event, palette and space.",
-    color: "pink",
-    tag: "A LITTLE EXTRA? ALWAYS.",
+      "Arches, walls and balloon clouds designed for your space. A focal point for the occasion, in a palette that feels like you.",
+    color: "blue",
+    tag: "MADE FOR YOUR SPACE",
   },
   {
     number: "02",
-    title: "Backdrops + Props",
+    title: "Garlands + Backdrops",
     description:
-      "Layered photo moments designed to make the theme feel complete.",
-    color: "lavender",
-    tag: "SET THE SCENE.",
+      "Custom balloon garlands for backdrops, easels, marquee lights and step-and-repeat displays.",
+    color: "sage",
+    tag: "SET THE SCENE",
   },
-  // SAMPLE COPY: confirm final service scope with owner.
   {
     number: "03",
-    title: "Celebration Styling",
+    title: "Helium Arrangements",
     description:
-      "A cohesive visual direction for birthdays, showers, milestones and special occasions.",
-    color: "lime",
-    tag: "IT’S ALL IN THE DETAILS.",
+      "Oversized helium balloons and bundles for the moments that call for something simple and special.",
+    color: "linen",
+    tag: "A LITTLE LIFT",
   },
-  // SAMPLE COPY: confirm final service scope with owner.
   {
     number: "04",
-    title: "Brand + Corporate Moments",
+    title: "Pick Up + Celebrate",
     description:
-      "Branded installations and camera-ready event features for launches, openings and company celebrations.",
-    color: "aqua",
-    tag: "BIG IDEAS. BIG IMPACT.",
+      "Five- and ten-foot garlands, freestanding garlands and balloon kits. Choose your colors and share your plans.",
+    color: "clay",
+    tag: "YOUR CELEBRATION, YOUR WAY",
   },
 ];
-// SAMPLE CONCEPTS: these are editorial image slots, not completed Swanky projects.
-// Replace image, alt and category here when approved photography is provided.
+export const balloonMenu = {
+  pickup: [
+    "5′ garland",
+    "10′ garland",
+    "Oversized helium",
+    "Helium bundles",
+    "Freestanding garlands",
+    "Balloon kits",
+  ],
+  delivery: [
+    "Balloon arches",
+    "Balloon walls",
+    "Helium arches",
+    "Backdrop installations",
+    "Marquee light installations",
+    "Step-and-repeat installations",
+    "Mailbox clusters",
+    "Easel installations",
+    "Balloon clouds",
+    "Pendant light balloons",
+    "Custom balloon garlands",
+  ],
+  note: "Tell us which pieces you have in mind. We’ll confirm the design, pickup or delivery details, and everything included in your proposal.",
+};
+// Confirmed by the user as Swanky's own, approved portfolio work.
+// Source: owner Drive board 8. Other boards contain third-party inspiration, not portfolio assets.
+// Occasion is unverified, so descriptions remain Custom Celebration rather than inventing event types.
 export const portfolio: PortfolioItem[] = [
   {
-    id: "color-party",
-    title: "Color-Forward Birthday Installation",
-    category: "Birthdays",
-    image: null,
-    alt: "",
-    colors: ["#ef2aa8", "#aaa7f7", "#e7ef2d"],
-    background: "#d9d6f3",
-    motif: "MAKE IT\nA MOMENT.",
-    imageNeeded: "Full-height colorful birthday installation",
+    id: "botanical-greens",
+    title: "Botanical Green Installation",
+    category: "Botanical Greens",
+    image: "/swanky/portfolio/botanical-green-installation.webp",
+    alt: "Swanky freestanding balloon installation in sage, olive and deep green with trailing greenery beside a venue column",
+    colors: ["#a7b5a0", "#617563", "#eae6d9"],
+    background: "#e3e7df",
+    motif: "",
+    imageNeeded: "",
   },
   {
-    id: "soft-bloom",
-    title: "Soft Pastel Shower Backdrop",
-    category: "Showers",
-    image: null,
-    alt: "",
-    colors: ["#f7b5dc", "#fff8ef", "#9ee4df"],
-    background: "#f3cddc",
-    motif: "oh,\nbaby.",
-    imageNeeded: "Pastel shower backdrop, portrait crop",
+    id: "pink-ivory",
+    title: "Pink + Ivory Freestanding Garland",
+    category: "Pink + Ivory",
+    image: "/swanky/portfolio/pink-ivory-freestanding.webp",
+    alt: "Swanky pink and ivory freestanding balloon garland with delicate white flowers beside a wooden barn door",
+    colors: ["#d6abb1", "#f2eee5", "#b4a18d"],
+    background: "#eee0dc",
+    motif: "",
+    imageNeeded: "",
   },
   {
-    id: "brand-moment",
-    title: "Branded Event Moment",
-    category: "Corporate",
-    image: null,
-    alt: "",
-    colors: ["#e7ef2d", "#aaa7f7", "#ef2aa8"],
-    background: "#e7ef2d",
-    motif: "BIG\nENERGY.",
-    imageNeeded: "Approved branded event installation",
-  },
-  {
-    id: "neutral",
-    title: "Modern Neutral Celebration",
-    category: "Weddings",
-    image: null,
-    alt: "",
-    colors: ["#fff8ef", "#c8af92", "#decfc2"],
-    background: "#ddcdbc",
-    motif: "all\nlove.",
-    imageNeeded: "Neutral celebration or verified wedding installation",
-  },
-  {
-    id: "disco",
-    title: "Disco-Inspired Photo Wall",
-    category: "Birthdays",
-    image: null,
-    alt: "",
-    colors: ["#ef2aa8", "#aaa7f7", "#ff786c"],
-    background: "#a5a0ef",
-    motif: "LET’S\nDANCE.",
-    imageNeeded: "Disco-inspired balloon photo wall",
-  },
-  {
-    id: "outdoor",
-    title: "Outdoor Milestone Installation",
-    category: "Seasonal",
-    image: null,
-    alt: "",
-    colors: ["#9ee4df", "#e7ef2d", "#fff8ef"],
-    background: "#aad9cc",
-    motif: "good\ntimes.",
-    imageNeeded: "Outdoor installation showing venue and scale",
+    id: "pink-lilac",
+    title: "Pink + Lilac Balloon Pillars",
+    category: "Pink + Lilac",
+    image: "/swanky/portfolio/pink-lilac-pillars.webp",
+    alt: "Two Swanky freestanding balloon pillars in pink and lilac framing an indoor venue entrance",
+    colors: ["#d6abb1", "#bcb4cd", "#cf8baf"],
+    background: "#e8e2ec",
+    motif: "",
+    imageNeeded: "",
   },
 ];
 export const categories = [
   "All",
-  "Birthdays",
-  "Showers",
-  "Weddings",
-  "Corporate",
-  "Seasonal",
+  "Botanical Greens",
+  "Pink + Ivory",
+  "Pink + Lilac",
 ];
 // SAMPLE COPY: all occasion categories and vibe labels require owner confirmation.
 export const eventTypes = [
@@ -164,51 +153,66 @@ export const budgetRanges = [
   "$5,000+",
   "I’m not sure yet",
 ];
+// Interpreted from the owner's mood boards. No numerical color specifications were supplied.
+export const brandColors = {
+  ink: "#39332e",
+  ivory: "#f7f4ed",
+  blue: "#8c9aa8",
+  blueDeep: "#4f6372",
+  sage: "#a7b5a0",
+  taupe: "#b4a18d",
+  chocolate: "#59473e",
+};
 export const swatches = [
-  { name: "Hot pink", hex: "#ef2aa8" },
-  { name: "Petal", hex: "#f7b5dc" },
-  { name: "Lavender", hex: "#aaa7f7" },
-  { name: "Lime", hex: "#e7ef2d" },
-  { name: "Aqua", hex: "#9ee4df" },
-  { name: "Coral", hex: "#ff786c" },
-  { name: "Cream", hex: "#fff8ef" },
-  { name: "Sand", hex: "#c8af92" },
-  { name: "Sky", hex: "#76b9ef" },
-  { name: "Cobalt", hex: "#3652c9" },
-  { name: "Cherry", hex: "#bd294b" },
-  { name: "Ink", hex: "#181517" },
+  { name: "Ivory", hex: "#f2eee5" },
+  { name: "Dusty blue", hex: "#8c9aa8" },
+  { name: "Sage", hex: "#a7b5a0" },
+  { name: "Taupe", hex: "#b4a18d" },
+  { name: "Chocolate", hex: "#59473e" },
+  { name: "Blush", hex: "#d6abb1" },
+  { name: "Lilac", hex: "#bcb4cd" },
+  { name: "Olive", hex: "#617563" },
+  { name: "Champagne", hex: "#d2c5a6" },
+  { name: "Bordeaux", hex: "#764650" },
+  { name: "Rose", hex: "#cf8baf" },
+  { name: "Ink", hex: "#39332e" },
 ];
 export const vibes = [
-  { name: "Disco Pop", colors: ["#ef2aa8", "#aaa7f7", "#e7ef2d"] },
-  { name: "Soft Bloom", colors: ["#f7b5dc", "#fff8ef", "#9ee4df"] },
-  { name: "Modern Neutral", colors: ["#fff8ef", "#c8af92", "#181517"] },
-  { name: "Electric Color", colors: ["#ef2aa8", "#e7ef2d", "#3652c9"] },
-  { name: "Team Spirit", colors: ["#3652c9", "#fff8ef", "#bd294b"] },
-  { name: "Build My Own", colors: ["#ff786c", "#9ee4df", "#aaa7f7"] },
+  { name: "Signature Swanky", colors: ["#f2eee5", "#8c9aa8", "#a7b5a0"] },
+  { name: "Soft Bloom", colors: ["#d6abb1", "#f2eee5", "#bcb4cd"] },
+  { name: "Natural Neutrals", colors: ["#f2eee5", "#b4a18d", "#59473e"] },
+  { name: "Garden Gathering", colors: ["#a7b5a0", "#617563", "#f2eee5"] },
+  { name: "A Little Romance", colors: ["#764650", "#d6abb1", "#d2c5a6"] },
+  { name: "Build My Own", colors: ["#8c9aa8", "#d6abb1", "#bcb4cd"] },
 ];
 export const processSteps = [
   {
-    title: "Tell Us About It",
+    title: "Share the occasion",
     description:
       "Share the date, location, occasion, inspiration and approximate budget.",
   },
   {
-    title: "Shape the Vision",
+    title: "Find the direction",
     description:
       "Swanky reviews the details and develops the recommended direction.",
   },
   {
-    title: "Approve the Plan",
+    title: "Confirm the details",
     description:
       "Confirm the scope and complete the steps required to reserve the event.",
   },
   {
-    title: "Make It Swanky",
+    title: "Enjoy the celebration",
     description:
       "The final design is prepared for your event and brought to life.",
   },
 ];
 export const faqs = [
+  {
+    question: "Can I pick up my balloons?",
+    answer:
+      "The balloon menu includes pickup options such as five- and ten-foot garlands, oversized helium balloons, helium bundles, freestanding garlands and balloon kits. Let us know what you have in mind so pickup details can be confirmed.",
+  },
   {
     question: "Where does Swanky Balloon Co. serve?",
     answer:
@@ -242,36 +246,61 @@ export const faqs = [
 ];
 export const testimonials: Testimonial[] = [];
 export const copy = {
+  cta: "Plan Your Celebration",
   announcement:
-    "Now creating unforgettable moments across Nashville, Brentwood + Middle Tennessee.",
+    "Custom balloons + thoughtful celebrations · Nashville, Brentwood & Middle Tennessee",
   hero: {
-    eyebrow: "CUSTOM BALLOONS + EVENT STYLING · NASHVILLE",
-    title: "Make the moment impossible to miss.",
+    eyebrow: "SWANKY BALLOON CO. / NASHVILLE, TN",
+    title: "A little wonder. A lasting impression.",
+    lines: ["A little wonder.", "A lasting", "impression."],
     description:
-      "Custom balloon art, backdrops and playful event styling created for celebrations that deserve more than basic.",
+      "Balloon garlands, helium arrangements and custom installations, designed around your colors, your space and your occasion.",
   },
   statement: {
-    title: "Not your average party backdrop.",
+    title: "The details make it yours.",
     description:
-      "Swanky turns colors, themes and big ideas into custom moments people want to photograph, share and remember.",
+      "A favorite shade. A beautiful setting. A reason to gather. We bring those details together in balloon designs that feel at home in your celebration.",
+  },
+  services: {
+    eyebrow: "THE BALLOON COLLECTION",
+    title: "A thoughtful touch. A beautiful celebration.",
+    description:
+      "From a bundle to bring along to an installation that fills the room.",
+  },
+  palette: {
+    eyebrow: "THE COLOR STUDIO",
+    title: "Every celebration begins with a palette.",
+    description:
+      "Start with a favorite combination, then make it your own. We’ll use it as the first page of your event’s design story.",
+  },
+  gallery: {
+    eyebrow: "A FEW SWANKY MOMENTS",
+    title: "Made for the occasion.",
+    description:
+      "Real installations, personal palettes, and all the details in between.",
   },
   about: {
-    title: "Big color. Thoughtful details. Very Swanky.",
+    title: "A thoughtful eye. A personal touch.",
     description:
-      "Swanky Balloon Co. creates custom balloon art and event styling for celebrations across Nashville, Brentwood and Middle Tennessee. Every event begins with a vision, a palette and the details that make the moment personal.",
+      "Swanky Balloon Co. creates custom balloon art and event styling across Nashville, Brentwood and Middle Tennessee. We begin with your occasion, your palette and your space, then shape a design around the details that matter to you.",
   },
   benefits: [
-    "A guided inquiry that captures the important details from the beginning",
-    "A visual direction built around the event, venue and palette",
-    "Clear communication from the first idea through event day",
+    "The important details, gathered in one thoughtful inquiry",
+    "A design direction shaped by your palette, venue and occasion",
+    "Clear next steps from the first conversation through event day",
   ],
   closing: {
-    title: "Let’s make it pop.",
+    title: "Something lovely starts here.",
     description:
-      "Tell us what you’re celebrating, where it’s happening and what you want the room to feel like.",
+      "Tell us about the occasion, the setting and the colors you love. We’ll help you find the right place to begin.",
   },
   confirmation:
-    "Thanks for sharing the details. Swanky will review your event and follow up within approximately 24–48 hours.",
+    "Thank you for sharing your plans. Swanky will review your event and follow up within approximately 24–48 hours.",
+  planner: {
+    eyebrow: "TELL US WHAT YOU’RE PLANNING",
+    title: "Your occasion. Beautifully considered.",
+    description: "A few details to begin. Room for your ideas to grow.",
+  },
 };
 export const pipelineStages = [
   "New Inquiry",

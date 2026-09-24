@@ -22,13 +22,13 @@ const positions = [
   [28, 47, 17, 2],
 ];
 export function BalloonCluster({
-  colors = ["#ef2aa8", "#aaa7f7", "#e7ef2d"],
+  colors = ["#f2eee5", "#8c9aa8", "#a7b5a0"],
   className = "",
 }: {
   colors?: string[];
   className?: string;
 }) {
-  const palette = colors.length ? colors : ["#fff8ef"];
+  const palette = colors.length ? colors : ["#f2eee5"];
   return (
     <div
       className={`balloon-cluster ${className}`}

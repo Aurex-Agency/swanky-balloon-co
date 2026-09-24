@@ -40,7 +40,7 @@ export function Confirmation() {
         <BalloonCluster colors={summary?.colors} />
         {summary && (
           <div>
-            <span className="eyebrow">YOUR NEXT GOOD TIME</span>
+            <span className="eyebrow">YOUR CELEBRATION</span>
             <h2>
               {summary.eventType} in {summary.venueCity}
             </h2>

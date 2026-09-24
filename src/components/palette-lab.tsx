@@ -3,7 +3,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { ArrowUpRight, Check } from "lucide-react";
 import { BalloonCluster } from "./balloons";
-import { vibes, swatches, eventTypes } from "@/data/swanky";
+import { vibes, swatches, eventTypes, copy } from "@/data/swanky";
 export interface Palette {
   vibe: string;
   colors: string[];
@@ -63,9 +63,9 @@ export function PalettePicker({
               <Check
                 size={19}
                 color={
-                  ["#3652c9", "#bd294b", "#181517"].includes(c.hex)
+                  ["#59473e", "#764650", "#39332e", "#617563"].includes(c.hex)
                     ? "#fff"
-                    : "#181517"
+                    : "#39332e"
                 }
               />
             )}
@@ -87,21 +87,13 @@ export function PaletteLab() {
   return (
     <section className="palette-section section" id="palette">
       <div className="section-intro">
-        <span className="eyebrow">A LITTLE COLOR PLAY</span>
-        <h2>
-          Find your
-          <br />
-          party palette<span className="pink-text">.</span>
-        </h2>
-        <p>
-          Your kind of color. Your kind of celebration.
-          <br />
-          Mix a little, dream a little. We’ll take it from here.
-        </p>
+        <span className="eyebrow">{copy.palette.eyebrow}</span>
+        <h2>{copy.palette.title}</h2>
+        <p>{copy.palette.description}</p>
       </div>
       <div className="palette-lab">
         <div className="palette-controls">
-          <span className="eyebrow">01 / PICK YOUR VIBE</span>
+          <span className="eyebrow">01 / CHOOSE A DIRECTION</span>
           <PalettePicker value={value} onChange={setValue} />
           <label className="event-select-label" htmlFor="palette-event">
             What are we celebrating? <span>(optional)</span>
@@ -118,7 +110,7 @@ export function PaletteLab() {
           </select>
         </div>
         <div className="palette-preview" data-testid="palette-preview">
-          <span className="eyebrow">YOUR SWANKY STARTER BOARD</span>
+          <span className="eyebrow">YOUR CELEBRATION PALETTE</span>
           <BalloonCluster colors={value.colors} />
           <div className="starter-board">
             <div>

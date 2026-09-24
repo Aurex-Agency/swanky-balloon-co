@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import Image from "next/image";
+import { Wordmark } from "./wordmark";
 import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 import { ArrowUpRight, Menu, X, Camera } from "lucide-react";
@@ -31,12 +31,7 @@ export function SiteHeader() {
       <div className="announcement">{copy.announcement}</div>
       <header className={`site-header ${scrolled ? "is-scrolled" : ""}`}>
         <Link href="/" className="logo" aria-label="Swanky Balloon Co. home">
-          <Image
-            src="/swanky/brand/logo-trim.png"
-            alt="Swanky Balloon Co."
-            width={225}
-            height={92}
-          />
+          <Wordmark />
         </Link>
         <nav className="desktop-nav" aria-label="Main navigation">
           {navigation.map((item) => (
@@ -46,7 +41,7 @@ export function SiteHeader() {
           ))}
         </nav>
         <Link className="button button-ink nav-cta" href="/inquire">
-          Start Your Party <ArrowUpRight size={18} />
+          Inquire <ArrowUpRight size={18} />
         </Link>
         <button
           className="menu-toggle"
@@ -96,7 +91,7 @@ export function SiteHeader() {
                 </Link>
               ))}
               <Link href="/inquire" onClick={() => setOpen(false)}>
-                Start Your Party <ArrowUpRight />
+                {copy.cta} <ArrowUpRight />
               </Link>
             </nav>
             <p>{brand.area}</p>
@@ -105,7 +100,7 @@ export function SiteHeader() {
       </header>
       {!["/inquire", "/thank-you", "/ops-preview"].includes(pathname) && (
         <Link className="mobile-cta button button-ink" href="/inquire">
-          Start Your Party <ArrowUpRight size={18} />
+          {copy.cta} <ArrowUpRight size={18} />
         </Link>
       )}
     </>
@@ -116,15 +111,10 @@ export function SiteFooter() {
     <footer className="site-footer">
       <div className="footer-top">
         <Link href="/" className="footer-logo">
-          <Image
-            src="/swanky/brand/logo-trim.png"
-            width={260}
-            height={106}
-            alt="Swanky Balloon Co."
-          />
+          <Wordmark />
         </Link>
         <p>
-          Good parties start with a little imagination.
+          Thoughtfully made for the moments that matter.
           <br />
           <span>{brand.area}</span>
         </p>

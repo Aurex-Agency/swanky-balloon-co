@@ -137,7 +137,7 @@ export const emptyDraft: Draft = {
   venueCity: "",
   environment: "Unsure",
   theme: "",
-  vibe: "Disco Pop",
+  vibe: vibes[0].name,
   colors: vibes[0].colors,
   serviceInterests: [],
   inspirationLink: "",

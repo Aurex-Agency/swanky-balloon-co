@@ -1,8 +1,8 @@
 # A 60-second Swanky walkthrough
 
-**0–12 seconds: The first impression.** Open http://127.0.0.1:3000. Show the bold typography, Swanky's real stickers, expressive color and mobile layout. Explain that the illustrated compositions are intentional placeholders for approved portfolio photography.
+**0–12 seconds: The first impression.** Open http://127.0.0.1:3000. Show the refined serif typography, ivory and dusty blue palette, and Swanky’s three confirmed installations. The design follows the owner’s supplied brand boards.
 
-**12–23 seconds: Make it personal.** Scroll to Find your party palette. Try Soft Bloom, remove a color, choose a new one and select an occasion. Click Use This Palette.
+**12–23 seconds: Make it personal.** Scroll to The Color Studio. Try Soft Bloom, remove a color, choose a new one and select an occasion. Click Use This Palette.
 
 **23–35 seconds: A better inquiry.** Point out the carried-over palette. Enter a date and venue city. Continue to the vision step and choose services. The customer gets a clear path without needing to know every detail upfront.
 

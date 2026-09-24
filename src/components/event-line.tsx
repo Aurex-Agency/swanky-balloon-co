@@ -17,7 +17,7 @@ export function EventLine() {
               .filter((t) => t !== "Other")
               .map((t) => (
                 <span key={t}>
-                  {t.toUpperCase()} <span className="marquee-star">✳</span>
+                  {t} <span className="marquee-star">·</span>
                 </span>
               ))}
           </span>

@@ -50,3 +50,7 @@ The file control is a local-only demonstration. Files are not uploaded, stored, 
 `/ops-preview` is an unlinked, noindex static presentation with clearly labeled fictional entries. It has no authentication and must never contain real customer data. Add authentication before making it a real operations screen. Robots directives are not access control. The full concept is noindex while `NEXT_PUBLIC_DEMO_MODE=true`.
 
 Before accepting public traffic, configure host-level abuse protection for the inquiry endpoint and validate the actual GHL workflow end to end. The current adapter has a request size limit and timeout but no distributed rate limiter, durable queue or guaranteed exactly-once delivery. On a timeout, check GHL before retrying to avoid duplicate event records.
+
+## September 2026 brand alignment
+
+The website now follows the owner’s supplied brand boards and pickup/delivery menu. The inquiry schema uses the revised service groups and neutral palettes, with version 2 local drafts. Three installations confirmed as Swanky’s work replace the gallery concepts. See `BRAND-ALIGNMENT.md` for sources and scope. This visual update does not change the webhook contract or enable the proposed automations.

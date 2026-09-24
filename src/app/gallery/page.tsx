@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
+import { copy } from "@/data/swanky";
 import { Gallery } from "@/components/gallery";
 export const metadata: Metadata = {
   title: "The Gallery",
@@ -12,25 +13,24 @@ export default function GalleryPage() {
   return (
     <>
       <div className="page-heading">
-        <span className="eyebrow">THE GOOD STUFF</span>
+        <span className="eyebrow">THE SWANKY GALLERY</span>
         <h1>
-          Big moments.
+          Every occasion.
           <br />
-          <span className="pink-text">Even bigger energy.</span>
+          <em>Its own kind of lovely.</em>
         </h1>
         <p>
-          A world of color, a little imagination, and so many ways to celebrate.
-          These illustrative studies show the possibilities while our real event
-          gallery is being prepared.
+          Explore Swanky’s custom balloon installations. A few different
+          palettes, each made for its own space and celebration.
         </p>
       </div>
       <section className="gallery-page section" aria-label="Event gallery">
         <Gallery />
       </section>
       <section className="gallery-closing section">
-        <h2>Your moment belongs here.</h2>
+        <h2>What will your celebration look like?</h2>
         <Link href="/inquire" className="button button-ink">
-          Start Your Party <ArrowUpRight size={18} />
+          {copy.cta} <ArrowUpRight size={18} />
         </Link>
       </section>
     </>

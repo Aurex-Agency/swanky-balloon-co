@@ -29,7 +29,10 @@ export function Gallery({ limit }: { limit?: number }) {
   }
   return (
     <>
-      <div className="gallery-filters" aria-label="Filter gallery">
+      <div
+        className="gallery-filters"
+        aria-label="Filter installations by palette"
+      >
         {categories.map((c) => (
           <button
             key={c}
@@ -55,7 +58,9 @@ export function Gallery({ limit }: { limit?: number }) {
             <span className="gallery-caption">
               <span>
                 <small>
-                  {item.image ? item.category : "COLOR + STYLING CONCEPT"}
+                  {item.image
+                    ? `CUSTOM CELEBRATION · ${item.category}`
+                    : "COLOR + STYLING CONCEPT"}
                 </small>
                 <strong>{item.title}</strong>
               </span>

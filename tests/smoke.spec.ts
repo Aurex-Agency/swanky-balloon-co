@@ -25,7 +25,9 @@ test("homepage, primary CTA and visual acceptance", async ({
 }, testInfo) => {
   await page.goto("/");
   await expect(
-    page.getByRole("heading", { name: "Make the moment impossible to miss." }),
+    page.getByRole("heading", {
+      name: "A little wonder. A lasting impression.",
+    }),
   ).toBeVisible();
   await prepareScreenshot(page);
   await page.screenshot({
@@ -34,30 +36,30 @@ test("homepage, primary CTA and visual acceptance", async ({
   });
   await page
     .locator(".hero")
-    .getByRole("link", { name: "Start Your Party" })
+    .getByRole("link", { name: "Plan Your Celebration" })
     .click();
   await expect(page).toHaveURL(/\/inquire/);
   await expect(page.getByLabel("Event date")).toBeVisible();
 });
 test("gallery filters and keyboard lightbox", async ({ page }) => {
   await page.goto("/gallery");
-  await page.getByRole("button", { name: "Showers", exact: true }).click();
+  await page.getByRole("button", { name: "Pink + Ivory", exact: true }).click();
   await expect(page.locator(".gallery-card")).toHaveCount(1);
   await page
-    .getByRole("button", { name: "View Soft Pastel Shower Backdrop" })
+    .getByRole("button", { name: "View Pink + Ivory Freestanding Garland" })
     .click();
   await expect(page.getByRole("dialog")).toBeVisible();
   await page.keyboard.press("Escape");
   await expect(page.getByRole("dialog")).not.toBeVisible();
   await page.getByRole("button", { name: "All", exact: true }).click();
-  await expect(page.locator(".gallery-card")).toHaveCount(6);
+  await expect(page.locator(".gallery-card")).toHaveCount(3);
 });
 test("palette updates and survives navigation", async ({ page }) => {
   await page.goto("/");
   await page.getByRole("button", { name: "Soft Bloom", exact: true }).click();
   await expect(
     page.getByTestId("palette-preview").locator(".balloon-cluster"),
-  ).toHaveAttribute("style", /--balloon-0: #f7b5dc/);
+  ).toHaveAttribute("style", /--balloon-0: #d6abb1/);
   await page.getByLabel("What are we celebrating?").selectOption("Shower");
   await page.getByRole("link", { name: "Use This Palette" }).click();
   await expect(page.getByLabel("What are we celebrating?")).toHaveValue(
@@ -71,7 +73,7 @@ test("guided inquiry validates, saves, reviews and submits", async ({
   await page.goto("/?utm_source=instagram&utm_campaign=party");
   await page
     .locator(".hero")
-    .getByRole("link", { name: "Start Your Party" })
+    .getByRole("link", { name: "Plan Your Celebration" })
     .click();
   await page.getByRole("button", { name: "Continue", exact: true }).click();
   await expect(page.locator(".error-summary")).toContainText(
@@ -84,7 +86,7 @@ test("guided inquiry validates, saves, reviews and submits", async ({
   await page.getByRole("button", { name: "Continue", exact: true }).click();
   await expect(page.getByLabel("Theme or concept")).toBeVisible();
   await page.getByLabel("Theme or concept").fill("Colorful milestone");
-  await page.getByLabel("Custom Balloon Art", { exact: true }).check();
+  await page.getByLabel("Custom Installations", { exact: true }).check();
   await page.getByRole("button", { name: "Continue", exact: true }).click();
   await page.getByLabel("$1,000–$2,500", { exact: true }).check();
   await page.reload();
@@ -113,7 +115,7 @@ test("guided inquiry validates, saves, reviews and submits", async ({
     "Birthday in Nashville",
   );
   expect(
-    await page.evaluate(() => localStorage.getItem("swanky-inquiry-v1")),
+    await page.evaluate(() => localStorage.getItem("swanky-inquiry-v2")),
   ).toBeNull();
 });
 test("past dates rejected by server and client", async ({ page, request }) => {

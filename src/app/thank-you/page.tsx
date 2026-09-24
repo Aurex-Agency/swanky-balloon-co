@@ -4,18 +4,18 @@ import { ArrowUpRight } from "lucide-react";
 import { Confirmation } from "@/components/confirmation";
 import { brand, copy } from "@/data/swanky";
 export const metadata: Metadata = {
-  title: "Your Party Is in Motion",
+  title: "Here’s to Something Lovely",
   robots: { index: false, follow: false },
   alternates: { canonical: "/thank-you" },
 };
 export default function ThankYou() {
   return (
     <section className="thank-you section">
-      <span className="eyebrow">YOUR PARTY IS OFFICIALLY IN MOTION.</span>
+      <span className="eyebrow">YOUR INQUIRY IS IN GOOD HANDS.</span>
       <h1>
-        Oh, this is
+        Here’s to
         <br />
-        going to be <span className="pink-text">good.</span>
+        <em>something lovely.</em>
       </h1>
       <p>{copy.confirmation}</p>
       <Confirmation />

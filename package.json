@@ -13,7 +13,7 @@
     "format": "prettier --write \"src/**/*.{ts,tsx,css}\" \"tests/**/*.ts\" playwright.config.ts next.config.ts eslint.config.mjs"
   },
   "dependencies": {
-    "@fontsource-variable/bricolage-grotesque": "^5.3.0",
+    "@fontsource-variable/cormorant-garamond": "^5.3.0",
     "@fontsource-variable/manrope": "^5.3.0",
     "lucide-react": "^1.48.0",
     "motion": "^13.4.3",
