@@ -1,6 +1,6 @@
 # A 60-second Swanky walkthrough
 
-**0–12 seconds: The first impression.** Open http://127.0.0.1:3000. Show the refined serif typography, ivory and dusty blue palette, and Swanky’s three confirmed installations. The design follows the owner’s supplied brand boards.
+**0–12 seconds: The first impression.** Open http://127.0.0.1:3000. Show the oversized “Make it Swanky” opening, dusty blue background and arched installation photograph. Use the numbered photo controls to browse Swanky’s three confirmed installations. The stronger composition keeps the owner’s serif and neutral brand direction.
 
 **12–23 seconds: Make it personal.** Scroll to The Color Studio. Try Soft Bloom, remove a color, choose a new one and select an occasion. Click Use This Palette.
 

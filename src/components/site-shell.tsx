@@ -8,6 +8,7 @@ import { brand, navigation, copy } from "@/data/swanky";
 export function SiteHeader() {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [pastHero, setPastHero] = useState(false);
   const pathname = usePathname();
   const toggle = useRef<HTMLButtonElement>(null);
   const menu = useRef<HTMLDivElement>(null);
@@ -17,6 +18,18 @@ export function SiteHeader() {
     window.addEventListener("scroll", handler, { passive: true });
     return () => window.removeEventListener("scroll", handler);
   }, []);
+  useEffect(() => {
+    if (pathname !== "/") return;
+    const hero = document.querySelector(".hero");
+    if (!hero) return;
+    const observer = new IntersectionObserver(([entry]) => {
+      setPastHero(
+        !entry.isIntersecting && entry.boundingClientRect.bottom <= 0,
+      );
+    });
+    observer.observe(hero);
+    return () => observer.disconnect();
+  }, [pathname]);
   useEffect(() => {
     if (!open) return;
     const old = document.body.style.overflow;
@@ -98,11 +111,12 @@ export function SiteHeader() {
           </div>
         )}
       </header>
-      {!["/inquire", "/thank-you", "/ops-preview"].includes(pathname) && (
-        <Link className="mobile-cta button button-ink" href="/inquire">
-          {copy.cta} <ArrowUpRight size={18} />
-        </Link>
-      )}
+      {!["/inquire", "/thank-you", "/ops-preview"].includes(pathname) &&
+        (pathname !== "/" || pastHero) && (
+          <Link className="mobile-cta button button-ink" href="/inquire">
+            {copy.cta} <ArrowUpRight size={18} />
+          </Link>
+        )}
     </>
   );
 }

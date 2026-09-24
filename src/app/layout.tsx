@@ -19,7 +19,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     siteName: brand.name,
-    title: "Swanky Balloon Co. | A little wonder. A lasting impression.",
+    title: "Swanky Balloon Co. | Life’s a party. Make it Swanky.",
     description: brand.description,
     locale: "en_US",
   },

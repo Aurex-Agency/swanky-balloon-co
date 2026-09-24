@@ -251,10 +251,10 @@ export const copy = {
     "Custom balloons + thoughtful celebrations · Nashville, Brentwood & Middle Tennessee",
   hero: {
     eyebrow: "SWANKY BALLOON CO. / NASHVILLE, TN",
-    title: "A little wonder. A lasting impression.",
-    lines: ["A little wonder.", "A lasting", "impression."],
+    title: "Life’s a party. Make it Swanky.",
+    lines: ["Life’s a party.", "Make it", "Swanky."],
     description:
-      "Balloon garlands, helium arrangements and custom installations, designed around your colors, your space and your occasion.",
+      "Custom balloons for your kind of celebration. From the first color to the final detail, made for you in Nashville and Middle Tennessee.",
   },
   statement: {
     title: "The details make it yours.",
@@ -271,7 +271,7 @@ export const copy = {
     eyebrow: "THE COLOR STUDIO",
     title: "Every celebration begins with a palette.",
     description:
-      "Start with a favorite combination, then make it your own. We’ll use it as the first page of your event’s design story.",
+      "A soft neutral? A little pink? Something entirely your own? Try a combination and bring your favorite colors along.",
   },
   gallery: {
     eyebrow: "A FEW SWANKY MOMENTS",

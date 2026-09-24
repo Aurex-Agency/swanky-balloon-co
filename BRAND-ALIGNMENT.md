@@ -29,3 +29,7 @@ Boards 6, 7, 9, 10 and 12 include third-party inspiration. Their logos, portrait
 ## Remaining launch inputs
 
 The existing live integration, privacy copy, response-time estimate and contact details still need final owner setup or confirmation. The brand update does not enable inquiry delivery or publish a Vercel deployment.
+
+## Homepage creative refinement
+
+The homepage was subsequently redesigned to restore more visual energy within the same brand system. The opening uses a dusty blue field, oversized serif typography, an arched photograph and a manual selector for all three approved installations. Services use an editorial list beside a photographed installation, with pickup and delivery menus in accessible disclosures. The color studio sits on a chocolate background; the closing invitation uses slate. Repeated supporting sections were removed. Desktop, tablet and phone layouts preserve the inquiry and gallery flows, keyboard controls and reduced-motion preferences.

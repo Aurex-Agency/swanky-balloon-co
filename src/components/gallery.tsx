@@ -3,7 +3,13 @@ import { useEffect, useRef, useState } from "react";
 import { ArrowUpRight, ArrowLeft, ArrowRight, X } from "lucide-react";
 import { portfolio, categories } from "@/data/swanky";
 import { PortfolioArt } from "./balloons";
-export function Gallery({ limit }: { limit?: number }) {
+export function Gallery({
+  limit,
+  showFilters = true,
+}: {
+  limit?: number;
+  showFilters?: boolean;
+}) {
   const [category, setCategory] = useState("All");
   const [active, setActive] = useState<number | null>(null);
   const dialog = useRef<HTMLDialogElement>(null);
@@ -29,23 +35,25 @@ export function Gallery({ limit }: { limit?: number }) {
   }
   return (
     <>
-      <div
-        className="gallery-filters"
-        aria-label="Filter installations by palette"
-      >
-        {categories.map((c) => (
-          <button
-            key={c}
-            aria-pressed={category === c}
-            onClick={() => {
-              setCategory(c);
-              setActive(null);
-            }}
-          >
-            {c}
-          </button>
-        ))}
-      </div>
+      {showFilters && (
+        <div
+          className="gallery-filters"
+          aria-label="Filter installations by palette"
+        >
+          {categories.map((c) => (
+            <button
+              key={c}
+              aria-pressed={category === c}
+              onClick={() => {
+                setCategory(c);
+                setActive(null);
+              }}
+            >
+              {c}
+            </button>
+          ))}
+        </div>
+      )}
       <div className="gallery-grid">
         {items.map((item, i) => (
           <button

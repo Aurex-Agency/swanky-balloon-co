@@ -26,7 +26,7 @@ test("homepage, primary CTA and visual acceptance", async ({
   await page.goto("/");
   await expect(
     page.getByRole("heading", {
-      name: "A little wonder. A lasting impression.",
+      name: "Life’s a party. Make it Swanky.",
     }),
   ).toBeVisible();
   await prepareScreenshot(page);
@@ -233,4 +233,39 @@ test("homepage has no runtime errors and motion can pause", async ({
   await page.getByRole("button", { name: "Soft Bloom", exact: true }).click();
   await expect(page.locator(".starter-board strong")).toHaveText("Soft Bloom");
   expect(errors).toEqual([]);
+});
+
+test("homepage photo selection and balloon menus", async ({
+  page,
+}, testInfo) => {
+  await page.goto("/");
+  if (testInfo.project.name === "mobile") {
+    await expect(page.locator(".mobile-cta")).toHaveCount(0);
+    await page.locator("#services").scrollIntoViewIfNeeded();
+    await expect(page.locator(".mobile-cta")).toBeVisible();
+    await page.evaluate(() => window.scrollTo({ top: 0, behavior: "instant" }));
+    await expect(page.locator(".mobile-cta")).toHaveCount(0);
+  }
+  const feature = page.getByRole("region", { name: "Featured Swanky work" });
+  await feature.getByRole("button", { name: "Show Pink + Lilac" }).click();
+  await expect(
+    feature.getByRole("button", { name: "Show Pink + Lilac" }),
+  ).toHaveAttribute("aria-pressed", "true");
+  await expect(feature.locator('button[aria-pressed="true"]')).toHaveCount(1);
+  await expect(
+    feature
+      .getByAltText(/Two Swanky freestanding balloon pillars/)
+      .locator(".."),
+  ).toHaveAttribute("aria-hidden", "false");
+  await feature.getByRole("button", { name: "Show Botanical Greens" }).focus();
+  await page.keyboard.press("Enter");
+  await expect(
+    feature.getByRole("button", { name: "Show Botanical Greens" }),
+  ).toHaveAttribute("aria-pressed", "true");
+  await page.getByText("Pick up & celebrate", { exact: true }).click();
+  await expect(page.getByText("5′ garland", { exact: true })).toBeVisible();
+  await page.getByText("Delivered for your occasion", { exact: true }).click();
+  await expect(
+    page.getByText("Pendant light balloons", { exact: true }),
+  ).toBeVisible();
 });

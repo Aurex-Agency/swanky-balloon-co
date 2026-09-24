@@ -1,6 +1,5 @@
 import Link from "next/link";
-import Image from "next/image";
-import { ArrowUpRight, ArrowRight, Plus, Check } from "lucide-react";
+import { ArrowUpRight, ArrowRight, ArrowDown, Plus } from "lucide-react";
 import {
   brand,
   copy,
@@ -9,16 +8,40 @@ import {
   balloonMenu,
   processSteps,
   faqs,
-  testimonials,
 } from "@/data/swanky";
-import { PortfolioArt, BalloonCluster } from "@/components/balloons";
+import { PortfolioArt } from "@/components/balloons";
 import { PaletteLab } from "@/components/palette-lab";
 import { Gallery } from "@/components/gallery";
 import { EventLine } from "@/components/event-line";
-import { BrandSeal, Wordmark } from "@/components/wordmark";
+import { BrandSeal } from "@/components/wordmark";
+import { HeroGallery } from "@/components/hero-gallery";
+import styles from "./home.module.css";
+
+function Ribbon({ className = "" }: { className?: string }) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 420 520"
+      fill="none"
+      aria-hidden="true"
+    >
+      <path
+        d="M361 -20C305 95 57 33 81 151C101 250 307 182 282 302C262 398 56 325 22 475C17 497 21 521 38 540"
+        stroke="currentColor"
+        strokeWidth="1.2"
+      />
+      <path
+        d="M372 -20C316 95 68 33 92 151C112 250 318 182 293 302C273 398 67 325 33 475C28 497 32 521 49 540"
+        stroke="currentColor"
+        strokeWidth=".6"
+      />
+    </svg>
+  );
+}
+
 export default function Home() {
   return (
-    <>
+    <div className={styles.home}>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
@@ -33,299 +56,263 @@ export default function Home() {
           }).replace(/</g, "\\u003c"),
         }}
       />
-      <section className="hero">
-        <div className="hero-copy">
-          <span className="eyebrow">{copy.hero.eyebrow}</span>
+      <section className={`hero ${styles.hero}`}>
+        <div className={styles.heroCopy}>
+          <span className="eyebrow">BALLOONS & GOOD TIMES / NASHVILLE, TN</span>
           <h1>
-            {copy.hero.lines[0]}
-            <br />
-            <em>{copy.hero.lines[1]}</em>
-            <br />
-            {copy.hero.lines[2]}
+            <span>Life’s a party.</span>Make it <em>Swanky.</em>
           </h1>
           <p>{copy.hero.description}</p>
-          <div className="hero-actions">
+          <div className={styles.heroActions}>
             <Link className="button button-ink" href="/inquire">
               {copy.cta}
               <ArrowUpRight size={18} />
             </Link>
             <Link className="text-link" href="/gallery">
-              View Our Work <ArrowRight size={17} />
+              View Our Work
+              <ArrowRight size={17} />
             </Link>
           </div>
-          <div className="hero-area">
-            Nashville · Brentwood · Middle Tennessee
-          </div>
+          <a href="#services" className={styles.heroFoot}>
+            <span className={styles.scrollCircle}>
+              <ArrowDown size={16} />
+            </span>
+            <span>A little extra. A lot to celebrate.</span>
+          </a>
         </div>
-        <div className="hero-collage">
-          <div className="hero-main-art">
-            <PortfolioArt item={portfolio[0]} priority />
-          </div>
-          <div className="hero-small-art">
-            <PortfolioArt item={portfolio[1]} />
-          </div>
-          <div className="hero-third-art">
-            <PortfolioArt item={portfolio[2]} />
-          </div>
-          <div className="hero-seal">
-            <BrandSeal />
-          </div>
-          <span className="collage-note">
-            Thoughtfully made. Happily celebrated.
-          </span>
-        </div>
+        <HeroGallery />
+        <span className={styles.heroIndex} aria-hidden="true">
+          THERE’S ALWAYS A REASON.
+        </span>
       </section>
-      <EventLine />
-      <section className="statement section">
-        <div className="statement-art">
-          <PortfolioArt item={portfolio[1]} />
-          <span className="photo-footnote">
-            Pink, ivory & a few delicate details.
+      <div className={styles.eventLine}>
+        <EventLine />
+      </div>
+
+      <section className={styles.introduction}>
+        <span className="eyebrow">FOR THE HOSTS WHO THINK OF EVERYTHING</span>
+        <h2>
+          Some call it extra.
+          <br />
+          We call it <em>the occasion.</em>
+        </h2>
+        <div className={styles.introBottom}>
+          <span className={styles.introNote}>
+            The first “wow.” <br />
+            The last photo.
           </span>
-        </div>
-        <div className="statement-copy">
-          <span className="eyebrow">A CELEBRATION THAT FEELS LIKE YOU</span>
-          <h2>{copy.statement.title}</h2>
-          <p>{copy.statement.description}</p>
-          <Link href="/inquire" className="text-link">
-            Tell us what you’re imagining <ArrowUpRight size={18} />
+          <p>
+            A birthday at home. A room full of your favorite people. A brand
+            with something to celebrate. We make the balloons feel like they
+            belong to you.
+          </p>
+          <Link
+            href="/inquire"
+            className={styles.roundLink}
+            aria-label="Tell us about your occasion"
+          >
+            <ArrowUpRight size={30} />
           </Link>
         </div>
+        <Ribbon className={styles.introRibbon} />
       </section>
-      <section className="services-section section" id="services">
-        <div className="section-heading">
-          <div>
-            <span className="eyebrow">{copy.services.eyebrow}</span>
-            <h2>{copy.services.title}</h2>
+
+      <section className={styles.collection} id="services">
+        <div className={styles.collectionHeading}>
+          <span className="eyebrow">01 / THE BALLOON COLLECTION</span>
+          <h2>
+            A little something.
+            <br />
+            <em>Or a whole moment.</em>
+          </h2>
+        </div>
+        <div className={styles.collectionLayout}>
+          <div className={styles.collectionPhoto}>
+            <PortfolioArt item={portfolio[1]} />
+            <span className={styles.photoCaption}>Made to be remembered.</span>
+            <div className={styles.paletteTag}>
+              <span>THE PALETTE</span>
+              <i style={{ background: "#d6abb1" }} />
+              <i style={{ background: "#f2eee5" }} />
+              <i style={{ background: "#b4a18d" }} />
+            </div>
           </div>
-          <p>{copy.services.description}</p>
+          <div className={styles.serviceList}>
+            {services.map((service, i) => (
+              <Link
+                href={`/inquire?service=${encodeURIComponent(service.title)}`}
+                className={styles.serviceRow}
+                key={service.title}
+              >
+                <span className={styles.serviceNumber}>0{i + 1}</span>
+                <div>
+                  <span className={styles.serviceTag}>{service.tag}</span>
+                  <h3>{service.title}</h3>
+                  <p>{service.description}</p>
+                </div>
+                <ArrowUpRight size={23} />
+              </Link>
+            ))}
+          </div>
         </div>
-        <div className="service-grid">
-          {services.map((s, i) => (
-            <Link
-              href={`/inquire?service=${encodeURIComponent(s.title)}`}
-              className={`service-card service-${s.color}`}
-              key={s.title}
-            >
-              <div className="service-number">
-                <span>0{i + 1}</span>
-                <ArrowUpRight size={19} />
-              </div>
-              <div className={`service-symbol symbol-${i}`} aria-hidden="true">
-                {i === 1 ? (
-                  <span className="mini-arches">
-                    <i />
-                    <i />
-                    <i />
-                  </span>
-                ) : (
-                  <BalloonCluster
-                    colors={
-                      i === 0
-                        ? ["#8c9aa8", "#f2eee5", "#a7b5a0"]
-                        : i === 2
-                          ? ["#f2eee5", "#b4a18d", "#d2c5a6"]
-                          : ["#d6abb1", "#f2eee5", "#b4a18d"]
-                    }
-                  />
-                )}
-              </div>
-              <span className="service-tag">{s.tag}</span>
-              <h3>{s.title}</h3>
-              <p>{s.description}</p>
-            </Link>
-          ))}
-        </div>
-        <div className="balloon-menu">
-          <div className="menu-intro">
-            <span className="eyebrow">THE BALLOON MENU</span>
-            <h3>
-              A little something, <br />
-              or the whole room.
-            </h3>
+        <div className={styles.menu}>
+          <div>
+            <span className="eyebrow">SOMETHING IN MIND?</span>
+            <h3>The balloon menu.</h3>
             <p>{balloonMenu.note}</p>
           </div>
-          <div>
-            <h3>Pick up & celebrate</h3>
-            <ul>
-              {balloonMenu.pickup.map((item) => (
-                <li key={item}>{item}</li>
-              ))}
-            </ul>
-          </div>
-          <div>
-            <h3>Delivered for your occasion</h3>
-            <ul>
-              {balloonMenu.delivery.map((item) => (
-                <li key={item}>{item}</li>
-              ))}
-            </ul>
+          <div className={styles.menuOptions}>
+            {[
+              { title: "Pick up & celebrate", items: balloonMenu.pickup },
+              {
+                title: "Delivered for your occasion",
+                items: balloonMenu.delivery,
+              },
+            ].map((group) => (
+              <details key={group.title}>
+                <summary>
+                  {group.title}
+                  <Plus size={22} />
+                </summary>
+                <ul>
+                  {group.items.map((item) => (
+                    <li key={item}>{item}</li>
+                  ))}
+                </ul>
+                <Link href="/inquire" className="text-link">
+                  Ask about your favorites
+                  <ArrowUpRight size={16} />
+                </Link>
+              </details>
+            ))}
           </div>
         </div>
       </section>
-      <PaletteLab />
-      <section className="portfolio-section section" id="work">
-        <div className="section-heading">
+
+      <div className={styles.colorStudio}>
+        <PaletteLab />
+      </div>
+
+      <section className={styles.work} id="work">
+        <div className={styles.workHeading}>
           <div>
-            <span className="eyebrow">{copy.gallery.eyebrow}</span>
-            <h2>{copy.gallery.title}</h2>
-          </div>
-          <p>{copy.gallery.description}</p>
-        </div>
-        <Gallery />
-        <div className="center-action">
-          <Link className="button button-outline" href="/gallery">
-            Explore the Gallery <ArrowUpRight size={18} />
-          </Link>
-        </div>
-      </section>
-      <section className="process-section section" id="process">
-        <div className="section-heading">
-          <div>
-            <span className="eyebrow">FROM THE FIRST IDEA</span>
+            <span className="eyebrow">02 / OUT IN THE WORLD</span>
             <h2>
-              A lovely plan,
+              A very good
               <br />
-              from start to celebration.
+              <em>reason to gather.</em>
             </h2>
           </div>
           <p>
-            Share what you know.
-            <br />
-            We’ll work through the details together.
+            Real celebrations. <br />A few of our favorite details.
           </p>
         </div>
-        <div className="process-grid">
-          {processSteps.map((s, i) => (
-            <article key={s.title}>
-              <span className="step-number">0{i + 1}</span>
-              <h3>{s.title}</h3>
-              <p>{s.description}</p>
+        <Gallery showFilters={false} />
+        <div className={styles.workFooter}>
+          <span>Your occasion could be next.</span>
+          <Link href="/gallery" className="text-link">
+            More Swanky moments
+            <ArrowUpRight size={18} />
+          </Link>
+        </div>
+      </section>
+
+      <section className={styles.process} id="process">
+        <div className={styles.processIntro}>
+          <span className="eyebrow">03 / FROM IDEA TO OCCASION</span>
+          <h2>
+            You bring the reason.
+            <br />
+            <em>We’ll bring the balloons.</em>
+          </h2>
+          <p>
+            No fully formed vision required. Start with your date, your space
+            and a few things you love.
+          </p>
+        </div>
+        <div className={styles.processSteps}>
+          {processSteps.map((step, i) => (
+            <article key={step.title}>
+              <span>0{i + 1}</span>
+              <div>
+                <h3>{step.title}</h3>
+                <p>{step.description}</p>
+              </div>
             </article>
           ))}
         </div>
       </section>
-      <section className="plan-section section">
-        <div>
-          <span className="eyebrow">ROOM TO ENJOY THE MOMENT</span>
-          <h2>
-            Your vision.
-            <br />A clear way forward.
-          </h2>
+
+      <section className={styles.about} id="about">
+        <div className={styles.aboutHeading}>
+          <BrandSeal />
+          <span className="eyebrow">
+            NASHVILLE, BRENTWOOD & MIDDLE TENNESSEE
+          </span>
         </div>
-        <div>
-          <ul className="benefit-list">
-            {copy.benefits.map((b) => (
-              <li key={b}>
-                <Check size={19} />
-                {b}
-              </li>
-            ))}
-          </ul>
-          <div className="journey">
-            {["Vision", "Design", "Approval", "Event Day"].map((s, i) => (
-              <span key={s}>
-                {s}
-                {i < 3 && <ArrowRight size={17} />}
-              </span>
-            ))}
-          </div>
-        </div>
-      </section>
-      <section className="about-section section" id="about">
-        <div>
-          <span className="eyebrow">A LITTLE ABOUT SWANKY</span>
-          <h2>{copy.about.title}</h2>
+        <h2>
+          A little more color.
+          <br />A little more <em>Swanky.</em>
+        </h2>
+        <div className={styles.aboutBottom}>
+          <span>Personal by design.</span>
           <p>{copy.about.description}</p>
           <a
-            className="text-link"
             href={brand.instagram}
             target="_blank"
             rel="noreferrer"
+            className="text-link"
           >
-            Follow along on Instagram <ArrowUpRight size={18} />
+            Follow the celebrations
+            <ArrowUpRight size={18} />
           </a>
         </div>
-        <div className="about-art">
-          {brand.founderImage ? (
-            <Image
-              src={brand.founderImage}
-              fill
-              sizes="(max-width:700px) 100vw,50vw"
-              alt="The creative behind Swanky Balloon Co."
-            />
-          ) : (
-            <>
-              <BrandSeal />
-              <Wordmark />
-              <p>
-                Beautifully personal.
-                <br />
-                Unmistakably Swanky.
-              </p>
-            </>
-          )}
-        </div>
       </section>
-      <section className="proof-section section">
-        <span className="eyebrow">GATHER. CELEBRATE. REMEMBER.</span>
-        <h2>
-          For the room.
-          <br />
-          For the photographs.
-          <br />
-          <em>For the memories.</em>
-        </h2>
-        {testimonials.length ? (
-          testimonials.map((t) => (
-            <blockquote key={t.attribution}>
-              {t.quote}
-              <cite>{t.attribution}</cite>
-            </blockquote>
-          ))
-        ) : (
-          <p>A few of the details from Swanky celebrations.</p>
-        )}
-        <div className="proof-strip">
-          {portfolio.map((p) => (
-            <PortfolioArt item={p} key={p.id} />
-          ))}
-        </div>
-      </section>
-      <section className="faq-section section" id="faq">
+
+      <section className={styles.faq} id="faq">
         <div>
-          <span className="eyebrow">BEFORE WE BEGIN</span>
+          <span className="eyebrow">THE LITTLE DETAILS</span>
           <h2>
-            A few things
+            Before the
             <br />
-            you may be wondering.
+            <em>celebration.</em>
           </h2>
-          <p>The details, made a little clearer.</p>
+          <p>A few answers to get things started.</p>
         </div>
         <div className="faq-list">
-          {faqs.map((f) => (
-            <details key={f.question}>
+          {faqs.map((faq) => (
+            <details key={faq.question}>
               <summary>
-                {f.question}
+                {faq.question}
                 <Plus size={20} />
               </summary>
-              <p>{f.answer}</p>
+              <p>{faq.answer}</p>
             </details>
           ))}
         </div>
       </section>
-      <section className="closing section">
-        <span className="eyebrow">AN OCCASION IN MIND?</span>
-        <h2>{copy.closing.title}</h2>
-        <p>{copy.closing.description}</p>
-        <Link href="/inquire" className="button button-ink">
-          {copy.cta}
-          <ArrowUpRight size={18} />
-        </Link>
-        <div className="closing-seal">
-          <BrandSeal />
+
+      <section className={styles.finale}>
+        <Ribbon className={styles.finaleRibbon} />
+        <span className="eyebrow">YOUR OCCASION. OUR NEXT CREATION.</span>
+        <h2>
+          Let’s make
+          <br />
+          <em>a scene.</em>
+        </h2>
+        <div className={styles.finaleBottom}>
+          <p>
+            Tell us what you’re celebrating.
+            <br />
+            We’ll take it from there, together.
+          </p>
+          <Link href="/inquire" className="button">
+            {copy.cta}
+            <ArrowUpRight size={20} />
+          </Link>
         </div>
+        <span className={styles.finaleNote}>With love, Swanky.</span>
       </section>
-    </>
+    </div>
   );
 }
