@@ -11,7 +11,7 @@ import {
   type Weighted,
 } from "@/lib/swanky/tokens";
 import { useReducedMotion } from "../motion/motion-provider";
-import { usePageEnter, usePageTransition } from "../motion/transition-provider";
+import { usePageEnter } from "../motion/transition-provider";
 
 /** Dispatch with a weighted color mix (see mixFrom) to recolor interactive garlands. */
 export const PALETTE_EVENT = "swanky:palette";
@@ -28,7 +28,6 @@ export function GarlandMotion({ svg, interactive, className, id }: Props) {
   const ref = useRef<HTMLDivElement>(null);
   const reduced = useReducedMotion();
   const inflateRef = useRef<() => void>(() => {});
-  const { isTransitioning } = usePageTransition();
 
   useGSAP(
     (_, contextSafe) => {
@@ -78,36 +77,30 @@ export function GarlandMotion({ svg, interactive, className, id }: Props) {
         return () => cleanups.forEach((c) => c());
       }
 
-      // Arriving by page transition, the garland is already inflated in the incoming card;
-      // only a fresh page load plays the balloon-by-balloon inflate.
-      const arriving = isTransitioning();
       gsap.set([...inner, ...sparkles], { transformOrigin: "50% 50%" });
-      if (!arriving) {
-        gsap.set(inner, { scale: 0 });
-        gsap.set(sparkles, { scale: 0 });
-      }
+      gsap.set(inner, { scale: 0 });
+      gsap.set(sparkles, { scale: 0 });
       root.classList.add("intro-ready");
       inflateRef.current = contextSafe!(() => {
-        if (!arriving)
-          gsap
-            .timeline({ delay: 0.15 })
-            .to(inner, {
+        gsap
+          .timeline({ delay: 0.15 })
+          .to(inner, {
+            scale: 1,
+            duration: 0.7,
+            ease: "float",
+            stagger: 0.006,
+          })
+          .to(
+            sparkles,
+            {
               scale: 1,
-              duration: 0.7,
+              rotate: 0,
+              duration: 0.9,
               ease: "float",
-              stagger: 0.006,
-            })
-            .to(
-              sparkles,
-              {
-                scale: 1,
-                rotate: 0,
-                duration: 0.9,
-                ease: "float",
-                stagger: 0.12,
-              },
-              1.05,
-            );
+              stagger: 0.12,
+            },
+            1.05,
+          );
         inner.forEach((b) =>
           ambient(
             gsap.to(b, {
@@ -116,7 +109,7 @@ export function GarlandMotion({ svg, interactive, className, id }: Props) {
               ease: "sine.inOut",
               yoyo: true,
               repeat: -1,
-              delay: (arriving ? 0 : 1.6) + Math.random() * 2,
+              delay: 1.6 + Math.random() * 2,
             }),
           ),
         );

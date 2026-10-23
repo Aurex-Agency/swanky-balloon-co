@@ -264,30 +264,32 @@
   padding: 0.15em 0.5em 0.22em;
 }
 
-/* ---------- Page transition (Slush 3D carousel) ---------- */
-.pt-stage {
+/* ---------- Page transition (balloon release) ---------- */
+.curtain {
   position: fixed;
   inset: 0;
-  z-index: 100;
-  background: var(--olive-deep);
-  perspective: 1000px;
-  pointer-events: none;
+  z-index: 130;
   overflow: hidden;
+  pointer-events: auto;
 }
-.pt-stage[hidden] {
+.curtain[hidden] {
   display: none;
 }
-.pt-panel,
-.pt-old {
-  position: absolute;
-  inset: 0;
-  border-radius: 2em;
-  overflow: hidden;
-  display: none;
-}
-.pt-old {
+.curtain-layer {
   display: block;
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  transform: translate3d(0, 110vh, 0);
+  will-change: transform;
+}
+/* Reduced motion: a quick ivory fade instead of balloons. */
+.curtain.is-fade {
   background: var(--ivory);
+}
+.curtain.is-fade .curtain-layer {
+  display: none;
 }
 
 /* ---------- Hero ---------- */

@@ -1,25 +1,32 @@
 "use client";
 
-// Slush's page transition, rebuilt for the App Router. The layout marks the page shell
-// with [data-shell] and the swapping content with [data-page]; the nav sits outside it.
+// Page transition: a balloon release. On an internal link a flock of cartoon balloons
+// rises from the bottom and covers the whole screen; the route swaps underneath while it
+// is covered; then the balloons float up and away, revealing the new page as its intro
+// plays. Two balloon layers move at slightly different speeds for depth.
 //
-// On an internal link we snapshot what is on screen into a fixed stage and start pushing
-// it back right away, then navigate. When the new route commits, the old page swings away
-// left while brand-colored panels sweep past and the new page swings in from the right
-// and lands flat. Everything runs on the Web Animations API with transforms only, so the
-// browser's compositor keeps it smooth even while React mounts the new page. The
-// transition ends the moment the new page lands. Reduced motion skips it entirely.
+// Smoothness: each layer is drawn ahead of time, while the browser is idle, into a canvas
+// bitmap, so the transition only slides finished bitmaps (Web Animations, transforms
+// only) and the compositor never has to draw balloons mid-flight or wait on React. The
+// link is prefetched on click and pushed on the first frame the solid core covers the
+// screen, so the swap never shows. Reduced motion gets a short fade instead; browser
+// back/forward navigates instantly.
 import { usePathname, useRouter } from "next/navigation";
 import {
   createContext,
   useCallback,
   useContext,
+  useEffect,
   useLayoutEffect,
   useRef,
 } from "react";
 import { setAmbientSuspended } from "@/lib/swanky/ambient";
-import { FLOAT } from "@/lib/swanky/eases";
-import { BRAND_COLORS, gsap, ScrollTrigger } from "@/lib/swanky/gsap";
+import {
+  buildCurtain,
+  type Curtain,
+  curtainColors,
+} from "@/lib/swanky/curtain";
+import { ScrollTrigger } from "@/lib/swanky/gsap";
 import { useMotion } from "./motion-provider";
 
 type TransitionContextValue = {
@@ -33,61 +40,58 @@ const TransitionContext = createContext<TransitionContextValue>({
   onEnter: () => () => {},
 });
 
-// Timing in ms. Slush runs ~3.6s end to end; this lands in ~1.75s.
-const PUSH = 550; // old page pushes back into a card
-const OVERLAP = 200; // the swing starts this long before the push ends
-const SWING = 900; // carousel swing
-const SETTLE = 500; // new page comes forward and flattens
+const RISE = 560; // balloons sweep up and cover the screen
+const AWAY = 720; // balloons float up and off, revealing the new page
+const FADE = 180; // reduced motion
+const RISE_EASE = "cubic-bezier(0.33, 0, 0.2, 1)"; // quick lift, soft arrival
+const AWAY_EASE = "cubic-bezier(0.55, 0, 0.8, 0.45)"; // drifts off, picking up speed
+const DRIFT = 0.12; // screen heights the flock drifts up while the page swaps
+// The front layer travels farther than the main flock, so the release has depth.
+const DEPTH = [1, 1.16];
+const SWAY = [0, 1.6]; // vw of sideways drift per layer
+const BACKING = "#EFE4D6";
+// Canvas resolution: crisp but within phone GPU memory and Safari's canvas size limit.
+const MAX_DPR = 1.5;
+const MAX_PIXELS = 12_000_000;
 
-// The float spring as a CSS linear() easing, so the compositor can run it.
-const FLOAT_CSS = (() => {
-  const stops = FLOAT.replace(/^M/, "")
-    .split(" L")
-    .map((p) => p.split(",").map(Number))
-    .map(([t, y]) => `${y} ${(t * 100).toFixed(1)}%`);
-  return `linear(${stops.join(", ")})`;
-})();
-const GLIDE_CSS = "cubic-bezier(0.65, 0.05, 0, 1)";
-const floatEase = () =>
-  typeof CSS !== "undefined" &&
-  CSS.supports("animation-timing-function", "linear(0, 1)")
-    ? FLOAT_CSS
-    : // Browsers without linear() get a smooth ease-out (expo) rather than a bounce.
-      "cubic-bezier(0.16, 1, 0.3, 1)";
+type Prepared = { w: number; h: number; c: Curtain };
+type Phase = "idle" | "rising" | "pushed";
 
-const T = (x: number, ry: number, z: number) =>
-  `translate3d(${x}%, 0, ${Math.round(z)}px) rotateY(${ry}deg)`;
+const layersOf = (root: HTMLElement | null) =>
+  Array.from(
+    root?.querySelectorAll<HTMLCanvasElement>("canvas.curtain-layer") ?? [],
+  );
 
-/** Copies only the sections that are on screen; the rest become same-height spacers. */
-function snapshot(page: HTMLElement) {
-  const vh = window.innerHeight;
-  const copy = (el: Element): Node => {
-    const r = el.getBoundingClientRect();
-    if (r.bottom < 0 || r.top > vh) {
-      const spacer = document.createElement("div");
-      spacer.style.height = `${r.height}px`;
-      return spacer;
-    }
-    return el.cloneNode(true);
-  };
-  const clone = page.cloneNode(false) as HTMLElement;
-  clone.removeAttribute("data-page");
-  for (const child of Array.from(page.children)) {
-    if (child.tagName === "MAIN") {
-      const main = child.cloneNode(false) as HTMLElement;
-      main.removeAttribute("id");
-      for (const section of Array.from(child.children))
-        main.appendChild(copy(section));
-      clone.appendChild(main);
-    } else {
-      clone.appendChild(copy(child));
-    }
+// Where each layer sits, as a translateY in px: start (below), cover, end (above).
+function positions(c: Curtain) {
+  const h = window.innerHeight;
+  const cover = -(c.lead + c.core / 2 - h / 2);
+  const start = h;
+  const end = -c.total - 40;
+  return DEPTH.map((k) => ({
+    start: cover + (start - cover) * k,
+    cover,
+    end: cover + (end - cover) * k,
+  }));
+}
+const shift = (y: number, swayVw: number) =>
+  `translate3d(${swayVw}vw, ${Math.round(y)}px, 0)`;
+
+async function rasterize(svg: string) {
+  const url = URL.createObjectURL(new Blob([svg], { type: "image/svg+xml" }));
+  try {
+    const img = new Image();
+    img.src = url;
+    await img.decode();
+    return img;
+  } finally {
+    // The decoded image keeps its pixels; the URL is no longer needed.
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
   }
-  clone.style.transform = `translateY(${-window.scrollY}px)`;
-  return clone;
 }
 
-type Pending = { old: HTMLElement; panels: HTMLElement[]; start: number };
+const whenIdle = (cb: () => void) =>
+  (window.requestIdleCallback ?? ((f: () => void) => setTimeout(f, 400)))(cb);
 
 export function TransitionProvider({
   children,
@@ -97,9 +101,11 @@ export function TransitionProvider({
   const router = useRouter();
   const pathname = usePathname();
   const { getLenis, reduced } = useMotion();
-  const stageRef = useRef<HTMLDivElement>(null);
-  const pending = useRef<Pending | null>(null);
-  const running = useRef(false);
+  const curtainRef = useRef<HTMLDivElement>(null);
+  const prepared = useRef<Prepared | null>(null);
+  const preparing = useRef<Promise<Prepared | null> | null>(null);
+  const phase = useRef<Phase>("idle");
+  const fromPath = useRef("");
   const enterCallbacks = useRef(new Set<() => void>());
   const failSafe = useRef<number | undefined>(undefined);
 
@@ -109,177 +115,221 @@ export function TransitionProvider({
     callbacks.forEach((cb) => cb());
   }, []);
 
-  const finish = useCallback(
-    (old: HTMLElement | null, panels: HTMLElement[]) => {
-      window.clearTimeout(failSafe.current);
-      const stage = stageRef.current;
-      const shell = document.querySelector<HTMLElement>("[data-shell]");
-      const next = shell?.querySelector<HTMLElement>("[data-page]");
-      for (const el of [old, next, ...panels]) {
-        el?.getAnimations().forEach((a) => a.cancel());
-      }
-      old?.remove();
-      panels.forEach((p) => p.removeAttribute("style"));
-      if (stage) stage.hidden = true;
-      shell?.removeAttribute("style");
-      next?.removeAttribute("style");
-      running.current = false;
-      setAmbientSuspended(false);
-      getLenis()?.start();
-      flushEnter();
-      // Re-measure scroll positions after the frame that shows the new page.
-      requestAnimationFrame(() => ScrollTrigger.refresh());
-    },
-    [flushEnter, getLenis],
-  );
+  // Draw a flock for the current screen into the canvases. `fresh` makes a new
+  // arrangement and color mix even when the size is unchanged.
+  const prepare = useCallback((fresh = false): Promise<Prepared | null> => {
+    const root = curtainRef.current;
+    if (!root) return Promise.resolve(null);
+    const w = window.innerWidth,
+      h = window.innerHeight;
+    const p = prepared.current;
+    if (!fresh && p && p.w === w && Math.abs(p.h - h) < 80)
+      return Promise.resolve(p);
+    if (preparing.current) return preparing.current;
+    const run = (async () => {
+      const c = buildCurtain(w, h, curtainColors(), BACKING);
+      const images = await Promise.all(c.layers.map(rasterize));
+      // Never redraw under a transition that is already playing.
+      if (phase.current !== "idle" && prepared.current)
+        return prepared.current;
+      const dpr = Math.min(
+        window.devicePixelRatio || 1,
+        MAX_DPR,
+        Math.sqrt(MAX_PIXELS / (w * c.total)),
+      );
+      layersOf(root).forEach((canvas, i) => {
+        canvas.width = Math.round(w * dpr);
+        canvas.height = Math.round(c.total * dpr);
+        canvas.style.width = `${w}px`;
+        canvas.style.height = `${c.total}px`;
+        canvas
+          .getContext("2d")
+          ?.drawImage(images[i], 0, 0, canvas.width, canvas.height);
+      });
+      prepared.current = { w, h, c };
+      return prepared.current;
+    })().finally(() => {
+      preparing.current = null;
+    });
+    preparing.current = run;
+    return run;
+  }, []);
+
+  // Prepare the flock when the browser is idle, and again after resizing.
+  useEffect(() => {
+    if (reduced) return;
+    // Skipped if reduced motion resolves before the browser goes idle.
+    let live = true;
+    whenIdle(() => {
+      if (live) void prepare();
+    });
+    let t: number | undefined;
+    const onResize = () => {
+      window.clearTimeout(t);
+      t = window.setTimeout(() => {
+        if (phase.current === "idle") void prepare();
+      }, 300);
+    };
+    window.addEventListener("resize", onResize);
+    return () => {
+      live = false;
+      window.clearTimeout(t);
+      window.removeEventListener("resize", onResize);
+    };
+  }, [prepare, reduced]);
+
+  const finish = useCallback(() => {
+    window.clearTimeout(failSafe.current);
+    const root = curtainRef.current;
+    layersOf(root).forEach((el) =>
+      el.getAnimations().forEach((a) => a.cancel()),
+    );
+    root?.getAnimations().forEach((a) => a.cancel());
+    if (root) root.hidden = true;
+    phase.current = "idle";
+    delete document.documentElement.dataset.transitioning;
+    setAmbientSuspended(false);
+    getLenis()?.start();
+    // Re-measure scroll positions on the frame after the reveal, then quietly draw a
+    // fresh flock for next time.
+    requestAnimationFrame(() => ScrollTrigger.refresh());
+    if (!reduced)
+      whenIdle(() => {
+        if (phase.current === "idle") void prepare(true);
+      });
+  }, [getLenis, prepare, reduced]);
+
+  // Float the balloons away (or fade back in, for reduced motion) and reveal the page.
+  const release = useCallback(() => {
+    window.clearTimeout(failSafe.current);
+    const root = curtainRef.current;
+    const c = prepared.current?.c;
+    window.scrollTo(0, 0);
+    getLenis()?.scrollTo(0, { immediate: true, force: true });
+    // Let the float-away get going before the new page's intro starts its own work.
+    window.setTimeout(flushEnter, reduced ? 0 : 120);
+    if (!root) return finish();
+    if (reduced || !c || root.classList.contains("is-fade")) {
+      root
+        .animate([{ opacity: 1 }, { opacity: 0 }], {
+          duration: FADE,
+          fill: "forwards",
+        })
+        .finished.then(finish, () => {});
+      return;
+    }
+    const pos = positions(c);
+    const anims = layersOf(root).map((el, i) =>
+      el.animate([{ transform: shift(pos[i].end, SWAY[i] * 2) }], {
+        duration: AWAY,
+        easing: AWAY_EASE,
+        fill: "forwards",
+      }),
+    );
+    anims[0]?.finished.then(finish, () => {});
+  }, [finish, flushEnter, getLenis, reduced]);
 
   const navigate = useCallback(
     (href: string) => {
-      if (running.current) return;
+      if (phase.current !== "idle") return;
       const url = new URL(href, window.location.href);
-      const stage = stageRef.current;
-      const page = document.querySelector<HTMLElement>(
-        "[data-shell] [data-page]",
-      );
-      if (
-        reduced ||
-        !stage ||
-        !page ||
-        url.pathname === window.location.pathname
-      ) {
+      const root = curtainRef.current;
+      if (!root || url.pathname === window.location.pathname) {
         router.push(href);
         return;
       }
-      running.current = true;
+      phase.current = "rising";
+      fromPath.current = window.location.pathname;
+      document.documentElement.dataset.transitioning = "true";
       setAmbientSuspended(true);
       getLenis()?.stop();
+      router.prefetch(href);
 
-      const w = window.innerWidth;
-      const old = document.createElement("div");
-      old.className = "pt-old";
-      old.setAttribute("aria-hidden", "true");
-      old.inert = true;
-      old.appendChild(snapshot(page));
-      stage.appendChild(old);
+      const push = () => {
+        if (phase.current !== "rising") return;
+        phase.current = "pushed";
+        router.push(href, { scroll: false });
+      };
+      // If the route never arrives (offline, error), uncover the page anyway.
+      failSafe.current = window.setTimeout(release, 6000);
 
-      const panels = Array.from(
-        stage.querySelectorAll<HTMLElement>(".pt-panel"),
-      );
-      const colors = gsap.utils.shuffle(BRAND_COLORS.slice(0, 5));
-      const starts = [
-        T(-200, 45, -0.5 * w),
-        T(200, -45, -0.5 * w),
-        T(200, -45, -0.25 * w),
-      ];
-      panels.forEach((p, i) => {
-        p.style.display = "block";
-        p.style.backgroundColor = colors[i];
-        p.style.transform = starts[i];
-      });
-      stage.hidden = false;
+      const fade = () => {
+        root.className = "curtain is-fade";
+        root.hidden = false;
+        root
+          .animate([{ opacity: 0 }, { opacity: 1 }], {
+            duration: FADE,
+            fill: "forwards",
+          })
+          .finished.then(push, () => {});
+      };
+      if (reduced) return fade();
 
-      // Push back immediately so the click feels instant while the route loads.
-      const ease = floatEase();
-      const push = { duration: PUSH, easing: ease, fill: "forwards" } as const;
-      old.animate(
-        [{ transform: T(0, 0, 0) }, { transform: T(0, 0, -w) }],
-        push,
-      );
-      panels[0].animate(
-        [{ transform: starts[0] }, { transform: T(-100, 22.5, -0.85 * w) }],
-        push,
-      );
-      panels[1].animate(
-        [{ transform: starts[1] }, { transform: T(100, -22.5, -0.85 * w) }],
-        push,
-      );
+      const rise = ({ c }: Prepared) => {
+        if (phase.current !== "rising") return;
+        root.className = "curtain";
+        root.hidden = false;
+        const pos = positions(c);
+        const h = window.innerHeight;
+        const layers = layersOf(root);
+        layers.forEach((el, i) => {
+          el.animate(
+            [
+              { transform: shift(pos[i].start, -SWAY[i]) },
+              { transform: shift(pos[i].cover, 0) },
+            ],
+            { duration: RISE, easing: RISE_EASE, fill: "forwards" },
+          );
+          // While the new page loads, keep drifting gently upward instead of stopping.
+          // The drift stays well inside the covered range; floating away picks up from
+          // wherever it is.
+          el.animate(
+            [
+              { transform: shift(pos[i].cover, 0) },
+              {
+                transform: shift(pos[i].cover - DRIFT * h * DEPTH[i], SWAY[i]),
+              },
+            ],
+            { delay: RISE, duration: 2400, easing: "linear", fill: "forwards" },
+          );
+        });
+        // Swap pages on the first frame the solid core covers the whole screen
+        // (measured, not guessed), so the change never shows between balloons.
+        const watch = () => {
+          if (phase.current !== "rising") return;
+          const top = (layers[0]?.getBoundingClientRect().top ?? 0) + c.lead;
+          if (top <= 0 && top + c.core >= window.innerHeight) push();
+          else requestAnimationFrame(watch);
+        };
+        requestAnimationFrame(watch);
+      };
 
-      pending.current = { old, panels, start: performance.now() };
-      // If the route never commits (offline, error), put everything back.
-      failSafe.current = window.setTimeout(() => {
-        pending.current = null;
-        finish(old, panels);
-      }, 8000);
-      router.push(href, { scroll: false });
+      const ready = prepared.current;
+      if (
+        ready &&
+        ready.w === window.innerWidth &&
+        Math.abs(ready.h - window.innerHeight) < 80
+      ) {
+        rise(ready);
+      } else {
+        // First click before the idle preparation ran: draw now, then rise.
+        prepare().then((p) => (p ? rise(p) : fade()), fade);
+      }
     },
-    [finish, getLenis, reduced, router],
+    [getLenis, prepare, reduced, release, router],
   );
 
-  // The new route has committed: swing the snapshot out and the new page in.
+  // The new route has committed under the curtain: reveal it. Also covers a browser
+  // back/forward that lands mid-transition.
   useLayoutEffect(() => {
-    const p = pending.current;
-    const shell = document.querySelector<HTMLElement>("[data-shell]");
-    const next = shell?.querySelector<HTMLElement>("[data-page]");
-    if (!p || !shell || !next) return;
-    pending.current = null;
-    window.clearTimeout(failSafe.current);
-
-    const w = window.innerWidth;
-    const { old, panels } = p;
-    Object.assign(shell.style, {
-      position: "fixed",
-      inset: "0",
-      zIndex: "102",
-      perspective: "1000px",
-      overflow: "hidden",
-    });
-    Object.assign(next.style, {
-      height: "100vh",
-      overflow: "hidden",
-      borderRadius: "2em",
-      transform: T(200, -45, -0.5 * w),
-      willChange: "transform",
-    });
-    window.scrollTo(0, 0);
-    getLenis()?.scrollTo(0, { immediate: true, force: true });
-
-    const ease = floatEase();
-    const delay = Math.max(0, PUSH - OVERLAP - (performance.now() - p.start));
-    // The swing overlaps the end of the push, so it gives only end keyframes: the browser
-    // picks up from wherever the push is, with no jump between the two.
-    const swing = {
-      duration: SWING,
-      delay,
-      easing: ease,
-      fill: "forwards",
-    } as const;
-    old.animate([{ transform: T(-200, 45, -0.5 * w) }], swing);
-    panels[0].animate([{ transform: T(-300, 67.5, -0.25 * w) }], swing);
-    panels[1].animate([{ transform: T(-100, 22.5, -0.85 * w) }], swing);
-    panels[2].animate(
-      [
-        { transform: T(200, -45, -0.25 * w) },
-        { transform: T(100, -22.5, -0.85 * w) },
-      ],
-      swing,
-    );
-    // One track for the new page: swing in on the float spring, then glide forward flat.
-    const landing = next.animate(
-      [
-        {
-          transform: T(200, -45, -0.5 * w),
-          borderRadius: "2em",
-          easing: ease,
-        },
-        {
-          transform: T(0, 0, -w),
-          borderRadius: "2em",
-          easing: GLIDE_CSS,
-          offset: SWING / (SWING + SETTLE),
-        },
-        { transform: T(0, 0, 0), borderRadius: "0em" },
-      ],
-      { duration: SWING + SETTLE, delay, fill: "forwards" },
-    );
-    landing.finished.then(
-      () => finish(old, panels),
-      () => {},
-    );
-  }, [pathname, finish, getLenis]);
+    if (phase.current === "idle") return;
+    if (window.location.pathname === fromPath.current) return;
+    release();
+  }, [pathname, release]);
 
   const value: TransitionContextValue = {
     navigate,
-    isTransitioning: () => running.current,
+    isTransitioning: () => phase.current !== "idle",
     onEnter: (cb) => {
       enterCallbacks.current.add(cb);
       return () => enterCallbacks.current.delete(cb);
@@ -289,10 +339,9 @@ export function TransitionProvider({
   return (
     <TransitionContext.Provider value={value}>
       {children}
-      <div ref={stageRef} className="pt-stage" hidden aria-hidden="true">
-        <div className="pt-panel" />
-        <div className="pt-panel" />
-        <div className="pt-panel" />
+      <div ref={curtainRef} className="curtain" hidden aria-hidden="true">
+        <canvas className="curtain-layer" />
+        <canvas className="curtain-layer" />
       </div>
     </TransitionContext.Provider>
   );
@@ -301,8 +350,8 @@ export function TransitionProvider({
 export const usePageTransition = () => useContext(TransitionContext);
 
 /**
- * Runs `cb` when the page is ready: immediately on a fresh load, or once the carousel has
- * landed when the page arrives by transition.
+ * Runs `cb` when the page is ready to animate in: immediately on a fresh load, or as the
+ * balloons float away when the page arrives by transition.
  */
 export function usePageEnter(cb: () => void) {
   const { isTransitioning, onEnter } = useContext(TransitionContext);
