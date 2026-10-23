@@ -1,50 +1,96 @@
 import { test, expect, type Page } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 
-async function prepareScreenshot(page: Page) {
-  await page.evaluate(() => document.fonts.ready);
-  for (const img of await page.locator("img").all()) {
-    if (await img.isVisible()) {
-      await img.evaluate(async (element) => {
-        element.scrollIntoView({ block: "center", behavior: "instant" });
-        await (element as HTMLImageElement).decode().catch(() => {});
-      });
-    }
-  }
-  await page.evaluate(async () => {
-    await Promise.all(
-      Array.from(document.images).map((img) => img.decode().catch(() => {})),
-    );
-    (document.activeElement as HTMLElement | null)?.blur();
-    window.scrollTo({ top: 0, behavior: "instant" });
+const ROUTES = [
+  "/",
+  "/work",
+  "/work/pink-ivory",
+  "/services",
+  "/services/custom-installations",
+  "/pickup",
+  "/palettes",
+  "/about",
+  "/faq",
+  "/inquire",
+  "/thank-you",
+  "/privacy",
+];
+
+// Client motion marks the page intro (or garland) ready once hydrated; interact after that.
+async function hydrated(page: Page) {
+  await expect(
+    page.locator("[data-intro].intro-ready, .garland.intro-ready").first(),
+  ).toBeAttached({
+    timeout: 15000,
   });
 }
+// After a link click, wait for the carousel transition to finish.
+async function settled(page: Page) {
+  await expect(page.locator(".pt-stage")).toBeHidden({ timeout: 10000 });
+}
 
-test("homepage, primary CTA and visual acceptance", async ({
-  page,
-}, testInfo) => {
+test("every page renders one h1 without runtime errors", async ({ page }) => {
+  const errors: string[] = [];
+  page.on("pageerror", (e) => errors.push(e.message));
+  page.on("console", (m) => m.type() === "error" && errors.push(m.text()));
+  for (const route of ROUTES) {
+    await page.goto(route);
+    await expect(page.locator("h1"), route).toHaveCount(1);
+  }
+  expect(errors).toEqual([]);
+});
+
+test("homepage CTA opens the inquiry", async ({ page }, testInfo) => {
   await page.goto("/");
+  await hydrated(page);
   await expect(
-    page.getByRole("heading", {
-      name: "Life’s a party. Make it Swanky.",
-    }),
+    page.getByRole("heading", { name: "Swanky", level: 1 }),
   ).toBeVisible();
-  await prepareScreenshot(page);
   await page.screenshot({
     path: `test-results/home-${testInfo.project.name}.png`,
-    fullPage: true,
   });
   await page
     .locator(".hero")
-    .getByRole("link", { name: "Plan Your Celebration" })
+    .getByRole("link", { name: "Tell us what you’re celebrating" })
     .click();
-  await expect(page).toHaveURL(/\/inquire/);
+  await expect(page).toHaveURL(/\/inquire$/, { timeout: 15000 });
+  await settled(page);
   await expect(page.getByLabel("Event date")).toBeVisible();
 });
-test("gallery filters and keyboard lightbox", async ({ page }) => {
-  await page.goto("/gallery");
+
+test("navigation menu and page widths", async ({ page }, testInfo) => {
+  await page.goto("/");
+  await hydrated(page);
+  if (testInfo.project.name === "mobile") {
+    await page.getByRole("button", { name: "Open menu" }).click();
+    const menu = page.getByRole("navigation", { name: "Mobile navigation" });
+    await expect(menu).toBeVisible();
+    await menu.getByRole("link", { name: "Work", exact: true }).click();
+    await expect(page).toHaveURL(/\/work$/, { timeout: 15000 });
+    await expect(menu).not.toBeVisible();
+  } else {
+    await page
+      .getByRole("navigation", { name: "Main" })
+      .getByRole("link", { name: "Services" })
+      .click();
+    await expect(page).toHaveURL(/\/services$/, { timeout: 15000 });
+  }
+  for (const route of [...ROUTES, "/ops-preview"]) {
+    await page.goto(route);
+    expect(
+      await page.evaluate(
+        () => document.documentElement.scrollWidth <= window.innerWidth,
+      ),
+      route,
+    ).toBe(true);
+  }
+});
+
+test("work filters and lightbox", async ({ page }) => {
+  await page.goto("/work");
+  await hydrated(page);
   await page.getByRole("button", { name: "Pink + Ivory", exact: true }).click();
-  await expect(page.locator(".gallery-card")).toHaveCount(1);
+  await expect(page.locator(".work-card")).toHaveCount(1);
   await page
     .getByRole("button", { name: "View Pink + Ivory Freestanding Garland" })
     .click();
@@ -52,29 +98,60 @@ test("gallery filters and keyboard lightbox", async ({ page }) => {
   await page.keyboard.press("Escape");
   await expect(page.getByRole("dialog")).not.toBeVisible();
   await page.getByRole("button", { name: "All", exact: true }).click();
-  await expect(page.locator(".gallery-card")).toHaveCount(3);
+  await expect(page.locator(".work-card")).toHaveCount(3);
 });
-test("palette updates and survives navigation", async ({ page }) => {
-  await page.goto("/");
+
+test("old gallery URL redirects to work", async ({ page }) => {
+  await page.goto("/gallery");
+  await expect(page).toHaveURL(/\/work$/);
+});
+
+test("palette studio carries into the inquiry", async ({ page }) => {
+  await page.goto("/palettes");
+  await hydrated(page);
   await page.getByRole("button", { name: "Soft Bloom", exact: true }).click();
-  await expect(
-    page.getByTestId("palette-preview").locator(".balloon-cluster"),
-  ).toHaveAttribute("style", /--balloon-0: #d6abb1/);
+  await expect(page.locator(".studio-name")).toHaveText("Soft Bloom");
   await page.getByLabel("What are we celebrating?").selectOption("Shower");
-  await page.getByRole("link", { name: "Use This Palette" }).click();
+  await page.getByRole("link", { name: "Use this palette" }).click();
+  await expect(page).toHaveURL(/\/inquire\?/, { timeout: 15000 });
+  await settled(page);
   await expect(page.getByLabel("What are we celebrating?")).toHaveValue(
     "Shower",
   );
   await expect(page.locator(".planner-board strong")).toHaveText("Soft Bloom");
 });
+
+test("service and story pages link into the inquiry", async ({ page }) => {
+  await page.goto("/services");
+  await hydrated(page);
+  // Cards reveal on scroll (Slush card reveal), so scroll to them like a visitor would.
+  await page.evaluate(() =>
+    document.querySelector(".service-cards")?.scrollIntoView(),
+  );
+  await page
+    .getByRole("link", { name: /Custom Installations/ })
+    .first()
+    .click();
+  await expect(page).toHaveURL(/\/services\/custom-installations$/, {
+    timeout: 15000,
+  });
+  await settled(page);
+  await expect(
+    page.getByRole("heading", { name: "Custom Installations", level: 1 }),
+  ).toBeVisible();
+  await expect(page.getByText("Balloon arches")).toBeVisible();
+  await page.goto("/work/pink-ivory");
+  await hydrated(page);
+  await page.getByRole("link", { name: "Start with these colors" }).click();
+  await expect(page).toHaveURL(/vibe=Soft\+Bloom/, { timeout: 15000 });
+  await settled(page);
+  await expect(page.locator(".planner-board strong")).toHaveText("Soft Bloom");
+});
+
 test("guided inquiry validates, saves, reviews and submits", async ({
   page,
 }, testInfo) => {
-  await page.goto("/?utm_source=instagram&utm_campaign=party");
-  await page
-    .locator(".hero")
-    .getByRole("link", { name: "Plan Your Celebration" })
-    .click();
+  await page.goto("/inquire?utm_source=instagram&utm_campaign=party");
   await page.getByRole("button", { name: "Continue", exact: true }).click();
   await expect(page.locator(".error-summary")).toContainText(
     "Choose an event type",
@@ -98,7 +175,6 @@ test("guided inquiry validates, saves, reviews and submits", async ({
   await page.getByLabel("Mobile phone", { exact: true }).fill("6155550100");
   await expect(page.locator(".inquiry-summary")).toContainText("Birthday");
   await page.getByRole("checkbox", { name: /I agree that Swanky/ }).check();
-  await prepareScreenshot(page);
   await page.screenshot({
     path: `test-results/inquiry-${testInfo.project.name}.png`,
     fullPage: true,
@@ -118,6 +194,7 @@ test("guided inquiry validates, saves, reviews and submits", async ({
     await page.evaluate(() => localStorage.getItem("swanky-inquiry-v2")),
   ).toBeNull();
 });
+
 test("past dates rejected by server and client", async ({ page, request }) => {
   await page.goto("/inquire");
   await page.getByLabel("What are we celebrating?").selectOption("Birthday");
@@ -131,41 +208,10 @@ test("past dates rejected by server and client", async ({ page, request }) => {
   expect(response.status()).toBe(400);
   expect((await response.json()).fields.eventDate).toContain("future date");
 });
-test("navigation and page widths", async ({ page }, testInfo) => {
-  await page.goto("/");
-  if (testInfo.project.name === "mobile") {
-    await page.getByRole("button", { name: "Open menu" }).click();
-    await expect(
-      page.getByRole("navigation", { name: "Mobile navigation" }),
-    ).toBeVisible();
-    await page
-      .getByRole("navigation", { name: "Mobile navigation" })
-      .getByRole("link", { name: "Work", exact: true })
-      .click();
-    await expect(page).toHaveURL(/\/gallery/);
-    await expect(
-      page.getByRole("navigation", { name: "Mobile navigation" }),
-    ).not.toBeVisible();
-  }
-  for (const route of [
-    "/",
-    "/inquire",
-    "/gallery",
-    "/ops-preview",
-    "/thank-you",
-  ]) {
-    await page.goto(route);
-    expect(
-      await page.evaluate(
-        () => document.documentElement.scrollWidth <= window.innerWidth,
-      ),
-      route,
-    ).toBe(true);
-  }
-});
+
 test("ops is sample data, unlinked and excluded from search", async ({
   page,
-}, testInfo) => {
+}) => {
   await page.goto("/ops-preview");
   await expect(
     page.getByText("No live customer data", { exact: true }),
@@ -175,24 +221,16 @@ test("ops is sample data, unlinked and excluded from search", async ({
     "content",
     /noindex/,
   );
-  await prepareScreenshot(page);
-  await page.screenshot({
-    path: `test-results/ops-${testInfo.project.name}.png`,
-    fullPage: true,
-  });
-  await expect(page.locator('.site-header a[href="/ops-preview"]')).toHaveCount(
-    0,
-  );
+  await page.goto("/");
+  await expect(page.locator('a[href="/ops-preview"]')).toHaveCount(0);
 });
+
 test("accessibility of public routes and ops", async ({ page }) => {
-  for (const route of [
-    "/",
-    "/gallery",
-    "/inquire",
-    "/ops-preview",
-    "/thank-you",
-  ]) {
+  test.setTimeout(120000);
+  for (const route of [...ROUTES, "/ops-preview"]) {
     await page.goto(route);
+    // Let page intros finish so contrast is measured on settled text, not mid-fade.
+    await page.waitForTimeout(3000);
     const results = await new AxeBuilder({ page })
       .withTags(["wcag2a", "wcag2aa", "wcag21aa", "wcag22aa"])
       .analyze();
@@ -202,6 +240,7 @@ test("accessibility of public routes and ops", async ({ page }) => {
     ).toEqual([]);
   }
 });
+
 test("API rejects malformed, oversized and invalid content", async ({
   request,
 }) => {
@@ -218,54 +257,15 @@ test("API rejects malformed, oversized and invalid content", async ({
   expect(invalid.status()).toBe(400);
 });
 
-test("homepage has no runtime errors and motion can pause", async ({
-  page,
-}) => {
-  const errors: string[] = [];
-  page.on("pageerror", (error) => errors.push(error.message));
-  page.on("console", (message) => {
-    if (message.type() === "error") errors.push(message.text());
-  });
-  await page.goto("/");
-  await page.getByRole("button", { name: "Pause event line" }).click();
-  await expect(page.locator(".marquee")).toHaveClass(/marquee-paused/);
-  await page.getByRole("button", { name: "Play event line" }).click();
-  await page.getByRole("button", { name: "Soft Bloom", exact: true }).click();
-  await expect(page.locator(".starter-board strong")).toHaveText("Soft Bloom");
-  expect(errors).toEqual([]);
-});
-
-test("homepage photo selection and balloon menus", async ({
-  page,
-}, testInfo) => {
-  await page.goto("/");
-  if (testInfo.project.name === "mobile") {
-    await expect(page.locator(".mobile-cta")).toHaveCount(0);
-    await page.locator("#services").scrollIntoViewIfNeeded();
-    await expect(page.locator(".mobile-cta")).toBeVisible();
-    await page.evaluate(() => window.scrollTo({ top: 0, behavior: "instant" }));
-    await expect(page.locator(".mobile-cta")).toHaveCount(0);
+test("sitemap lists the new pages", async ({ request }) => {
+  const xml = await (await request.get("/sitemap.xml")).text();
+  for (const path of [
+    "/work",
+    "/services/garlands-backdrops",
+    "/pickup",
+    "/palettes",
+    "/faq",
+  ]) {
+    expect(xml).toContain(path);
   }
-  const feature = page.getByRole("region", { name: "Featured Swanky work" });
-  await feature.getByRole("button", { name: "Show Pink + Lilac" }).click();
-  await expect(
-    feature.getByRole("button", { name: "Show Pink + Lilac" }),
-  ).toHaveAttribute("aria-pressed", "true");
-  await expect(feature.locator('button[aria-pressed="true"]')).toHaveCount(1);
-  await expect(
-    feature
-      .getByAltText(/Two Swanky freestanding balloon pillars/)
-      .locator(".."),
-  ).toHaveAttribute("aria-hidden", "false");
-  await feature.getByRole("button", { name: "Show Botanical Greens" }).focus();
-  await page.keyboard.press("Enter");
-  await expect(
-    feature.getByRole("button", { name: "Show Botanical Greens" }),
-  ).toHaveAttribute("aria-pressed", "true");
-  await page.getByText("Pick up & celebrate", { exact: true }).click();
-  await expect(page.getByText("5′ garland", { exact: true })).toBeVisible();
-  await page.getByText("Delivered for your occasion", { exact: true }).click();
-  await expect(
-    page.getByText("Pendant light balloons", { exact: true }),
-  ).toBeVisible();
 });
