@@ -10,34 +10,54 @@
   padding-left: max(16px, env(safe-area-inset-left, 0px));
   padding-right: max(16px, env(safe-area-inset-right, 0px));
 }
-.ticker-window {
+.ticker-line {
   flex: 1;
   min-width: 0;
-  overflow: hidden;
-}
-.ticker-track {
-  display: inline-flex;
+  display: flex;
+  justify-content: center;
   gap: 2.4em;
+  margin: 0;
   padding-block: 9px;
   white-space: nowrap;
   font-size: var(--fs-label);
   font-weight: 600;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  animation: ticker 40s linear infinite;
 }
-.ticker-track span::after {
+.ticker-line > span + span::before {
   content: "✦";
-  margin-left: 2.4em;
+  margin-right: 2.4em;
   color: var(--gold);
 }
-@keyframes ticker {
-  to {
-    transform: translateX(-50%);
+@media (max-width: 1199px) {
+  .ticker-line > span:nth-child(3) {
+    display: none;
   }
 }
-.motion-paused .ticker-track {
-  animation-play-state: paused;
+@media (max-width: 879px) {
+  .ticker-line > span:nth-child(2) {
+    display: none;
+  }
+}
+@media (max-width: 479px) {
+  .ticker-line {
+    letter-spacing: 0.1em;
+  }
+  .ticker-wide {
+    display: none;
+  }
+}
+@media (max-width: 379px) {
+  .ticker {
+    gap: 8px;
+  }
+  .ticker-line {
+    font-size: 0.64rem;
+    letter-spacing: 0.05em;
+  }
+  .ticker .motion-toggle {
+    padding: 0 9px;
+  }
 }
 .motion-toggle {
   flex: none;

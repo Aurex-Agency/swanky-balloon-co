@@ -1312,7 +1312,6 @@ legend {
   }
 }
 @media (prefers-reduced-motion: reduce) {
-  .ticker-track,
   .step-panel {
     animation: none;
   }
