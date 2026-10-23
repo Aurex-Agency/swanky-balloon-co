@@ -4,6 +4,20 @@ A presentation concept for Swanky Balloon Co., built for Aurex Business Labs. Ne
 
 Repository: https://github.com/Aurex-Agency/swanky-balloon-co
 
+## Redesign in progress (Phase 1 foundation)
+
+The site is being rebuilt to the direction in `../plan/` (design language, motion plan, build plan). Until every page is rebuilt, `src/app` has two route groups, each with its own root layout:
+
+- `src/app/(concept)/`: the current concept site, unchanged. Its pages move out one by one in Phase 2.
+- `src/app/(swanky)/`: the new system. Navigating between the two groups is a full page load. `src/app/global-not-found.tsx` (behind `experimental.globalNotFound`) serves the "This one popped." 404 for both.
+
+Foundation pieces:
+
+- Tokens and base styles: `src/styles/swanky/`, mirrored in `src/lib/swanky/tokens.ts`. Playfair Display + Montserrat (self-hosted via Fontsource).
+- Motion: `src/lib/swanky/gsap.ts` registers GSAP plugins and the two eases (`glide`, and `float`, a damped spring). `MotionProvider` runs Lenis at lerp 0.12; `TransitionProvider` + `TransitionLink` run the Slush-style 3D carousel between routes; `PageIntro` and `reveal.tsx` hold the page-load and scroll reveals. Reduced motion skips all of it.
+- Brand: the master logo lives in `public/swanky/brand/logo/`; `npm run brand:logo` regenerates `src/lib/swanky/logo-shapes.ts`. Stickers (`<Sticker>`) and the cartoon garland (`<Garland>`) are drawn in code.
+- Lab: `/lab` and `/lab/transition` (noindex, unlinked) exercise everything above. Tests: `tests/foundation.spec.ts`.
+
 ## Run locally
 
 ```sh

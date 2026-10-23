@@ -1,0 +1,53 @@
+/* Swanky design tokens. Palette from Jenn's Canva guide (p.5); type from p.7.
+   Mirrors src/lib/swanky/tokens.ts. See plan/01-DESIGN-LANGUAGE.md. */
+:root {
+  --ivory: #f7f0e6;
+  --olive: #565522;
+  --olive-deep: #3e3d17;
+  --charcoal: #252524;
+  --blush: #e8c3ba;
+  --blue: #a8bdcb;
+  --gold: #c7ad50;
+  --sand: #c9b79f;
+  --blush-wash: #f3e1db;
+  --blue-wash: #dee6eb;
+  --muted: #5e5a4e;
+  --on-olive: #e9e1cf;
+
+  --font-display:
+    "Playfair Display Variable", "Iowan Old Style", Georgia, serif;
+  --font-ui:
+    "Montserrat Variable", "Avenir Next", "Helvetica Neue", Arial, sans-serif;
+
+  --fs-mega: clamp(6.2rem, 24vw, 22rem);
+  --fs-display: clamp(3.2rem, 9vw, 8.5rem);
+  --fs-h2: clamp(2.1rem, 4.6vw, 4rem);
+  --fs-h3: clamp(1.4rem, 2.2vw, 1.9rem);
+  --fs-lead: clamp(1.08rem, 1.5vw, 1.3rem);
+  --fs-body: 1rem;
+  --fs-small: 0.875rem;
+  --fs-label: 0.72rem;
+
+  --hair: 1.5px solid var(--olive);
+  --r-card: 28px;
+  --r-pill: 999px;
+  --gap: clamp(16px, 2.4vw, 28px);
+  --gutter: max(16px, 4vw);
+  --ease-glide: cubic-bezier(0.65, 0.05, 0, 1);
+  color-scheme: light;
+}
+
+@theme inline {
+  --color-ivory: var(--ivory);
+  --color-olive: var(--olive);
+  --color-olive-deep: var(--olive-deep);
+  --color-charcoal: var(--charcoal);
+  --color-blush: var(--blush);
+  --color-blue: var(--blue);
+  --color-gold: var(--gold);
+  --color-sand: var(--sand);
+  --color-blush-wash: var(--blush-wash);
+  --color-blue-wash: var(--blue-wash);
+  --font-display: var(--font-display);
+  --font-sans: var(--font-ui);
+}
