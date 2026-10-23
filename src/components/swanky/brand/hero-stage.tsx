@@ -3,6 +3,7 @@
 // The wordmark stage: the word sits twice (behind and in front of the garland) so it reads
 // as sticker letters on top. Letters hop on hover; hero stickers float and can be thrown.
 import { useRef } from "react";
+import { ambient } from "@/lib/swanky/ambient";
 import { Draggable, gsap, useGSAP } from "@/lib/swanky/gsap";
 import { useReducedMotion } from "../motion/motion-provider";
 
@@ -11,9 +12,10 @@ type Props = {
   garland: React.ReactNode;
   stickers?: React.ReactNode;
   className?: string;
+  id?: string;
 };
 
-export function HeroStage({ word, garland, stickers, className }: Props) {
+export function HeroStage({ word, garland, stickers, className, id }: Props) {
   const ref = useRef<HTMLDivElement>(null);
   const reduced = useReducedMotion();
   const letters = [...word];
@@ -44,9 +46,8 @@ export function HeroStage({ word, garland, stickers, className }: Props) {
         ch.addEventListener("mouseenter", fn);
         return () => ch.removeEventListener("mouseenter", fn);
       });
-      root
-        .querySelectorAll("[data-float]")
-        .forEach((el, i) =>
+      root.querySelectorAll("[data-float]").forEach((el, i) =>
+        ambient(
           gsap.to(el, {
             y: "+=7",
             rotate: "+=3",
@@ -56,7 +57,8 @@ export function HeroStage({ word, garland, stickers, className }: Props) {
             repeat: -1,
             delay: i * 0.37,
           }),
-        );
+        ),
+      );
       const drags = Draggable.create(root.querySelectorAll("[data-drag]"), {
         type: "x,y",
         bounds: root.closest("section") ?? undefined,
@@ -79,7 +81,7 @@ export function HeroStage({ word, garland, stickers, className }: Props) {
 
   return (
     <div ref={ref} className={`wordmark-stage ${className ?? ""}`}>
-      <h1 className="wordmark wordmark-back" aria-label={word}>
+      <h1 className="wordmark wordmark-back" aria-label={word} id={id}>
         {letters.map((ch, i) => (
           <span className="ch" key={i} aria-hidden="true">
             {ch}

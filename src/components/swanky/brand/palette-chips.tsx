@@ -1,14 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import {
-  PALETTE_LABELS,
-  PALETTES,
-  type PaletteName,
-} from "@/lib/swanky/tokens";
+import { vibes } from "@/data/swanky";
+import { mixFrom, PALETTES } from "@/lib/swanky/tokens";
 import { PALETTE_EVENT } from "./garland-motion";
 
-const NAMES = Object.keys(PALETTES) as PaletteName[];
+const CHIPS = vibes.filter((v) => v.name !== "Build My Own");
 
 /** "Try it in your colors": recolors any interactive garland on the page. */
 export function PaletteChips({
@@ -16,28 +13,30 @@ export function PaletteChips({
 }: {
   label?: string;
 }) {
-  const [active, setActive] = useState<PaletteName>("mix");
+  const [active, setActive] = useState(CHIPS[0].name);
   return (
     <div className="palette-try" role="group" aria-label="Recolor the garland">
       <span className="label">{label}</span>
       <div className="palette-chips">
-        {NAMES.map((name) => (
+        {CHIPS.map((v, i) => (
           <button
-            key={name}
+            key={v.name}
             type="button"
             className="chip-btn"
-            aria-pressed={active === name}
+            aria-pressed={active === v.name}
             onClick={() => {
-              setActive(name);
+              setActive(v.name);
+              // The signature chip restores the full six-color mix.
+              const mix = i === 0 ? PALETTES.mix : mixFrom(v.colors);
               window.dispatchEvent(
-                new CustomEvent(PALETTE_EVENT, { detail: name }),
+                new CustomEvent(PALETTE_EVENT, { detail: mix }),
               );
             }}
           >
-            {PALETTES[name].slice(0, 3).map(([hex]) => (
+            {v.colors.map((hex) => (
               <i key={hex} style={{ background: hex }} aria-hidden="true" />
             ))}
-            {PALETTE_LABELS[name]}
+            {v.name}
           </button>
         ))}
       </div>

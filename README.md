@@ -4,19 +4,22 @@ A presentation concept for Swanky Balloon Co., built for Aurex Business Labs. Ne
 
 Repository: https://github.com/Aurex-Agency/swanky-balloon-co
 
-## Redesign in progress (Phase 1 foundation)
+## The redesigned site
 
-The site is being rebuilt to the direction in `../plan/` (design language, motion plan, build plan). Until every page is rebuilt, `src/app` has two route groups, each with its own root layout:
+Built to the direction in `../plan/` (design language, motion plan, build plan): Jenn's Canva palette and type, cartoon balloon garlands and stickers, and a motion system adapted from slush.app.
 
-- `src/app/(concept)/`: the current concept site, unchanged. Its pages move out one by one in Phase 2.
-- `src/app/(swanky)/`: the new system. Navigating between the two groups is a full page load. `src/app/global-not-found.tsx` (behind `experimental.globalNotFound`) serves the "This one popped." 404 for both.
+- `src/app/(swanky)/`: every public page. Home, Work (+ one page per event), Services (+ three collection pages), Pick Up, Palettes (color studio), About, FAQ, Inquire, Thank-you, Privacy.
+- `src/app/(ops)/ops-preview`: the internal sample CRM from the concept, unlinked and noindex, with its original styles in its own root layout.
+- `src/app/global-not-found.tsx`: the "This one popped." 404 for both groups (`experimental.globalNotFound`).
+- `/gallery` permanently redirects to `/work`.
 
-Foundation pieces:
+Building blocks:
 
-- Tokens and base styles: `src/styles/swanky/`, mirrored in `src/lib/swanky/tokens.ts`. Playfair Display + Montserrat (self-hosted via Fontsource).
-- Motion: `src/lib/swanky/gsap.ts` registers GSAP plugins and the two eases (`glide`, and `float`, a damped spring). `MotionProvider` runs Lenis at lerp 0.12; `TransitionProvider` + `TransitionLink` run the Slush-style 3D carousel between routes; `PageIntro` and `reveal.tsx` hold the page-load and scroll reveals. Reduced motion skips all of it.
-- Brand: the master logo lives in `public/swanky/brand/logo/`; `npm run brand:logo` regenerates `src/lib/swanky/logo-shapes.ts`. Stickers (`<Sticker>`) and the cartoon garland (`<Garland>`) are drawn in code.
-- Lab: `/lab` and `/lab/transition` (noindex, unlinked) exercise everything above. Tests: `tests/foundation.spec.ts`.
+- Tokens and styles: `src/styles/swanky/` (tokens, base, components, chrome, pages), mirrored in `src/lib/swanky/tokens.ts`. Playfair Display + Montserrat via Fontsource.
+- Motion: `src/lib/swanky/gsap.ts` registers GSAP plugins and the `glide` and `float` eases. `MotionProvider` runs Lenis; `TransitionProvider` + `TransitionLink` run the 3D carousel between pages; `PageIntro`, `reveal.tsx`, `Marquee`, `StackingSlider` and `RotatingWord` hold the rest. Reduced motion turns all of it off, and the "Pause motion" control (`src/lib/swanky/ambient.ts`) stops every loop.
+- Brand: the master logo is in `public/swanky/brand/logo/`; `npm run brand:logo` regenerates `src/lib/swanky/logo-shapes.ts`. `<Sticker>` and `<Garland>` are drawn in code.
+- SEO: per-page metadata and canonicals, LocalBusiness and FAQPage JSON-LD (`src/components/swanky/seo/json-ld.tsx`), `sitemap.ts`, and `public/og.png` for link previews.
+- Tests: `tests/smoke.spec.ts` (pages, navigation, gallery, palette carryover, inquiry, accessibility, API, sitemap) and `tests/foundation.spec.ts` (garland, transitions, reduced motion, pause, 404).
 
 ## Run locally
 
@@ -27,11 +30,11 @@ npm run dev -- --hostname 127.0.0.1
 ```
 
 - Home: http://127.0.0.1:3000
-- Gallery: http://127.0.0.1:3000/gallery
+- Work: http://127.0.0.1:3000/work
+- Services: http://127.0.0.1:3000/services
+- Color studio: http://127.0.0.1:3000/palettes
 - Inquiry: http://127.0.0.1:3000/inquire
-- Confirmation: http://127.0.0.1:3000/thank-you
 - Unlinked sample CRM: http://127.0.0.1:3000/ops-preview
-- Privacy placeholder: http://127.0.0.1:3000/privacy
 - Inquiry API: POST `/api/inquiry`
 
 ## Quality checks

@@ -13,7 +13,7 @@ export const COLOR = {
 
 export type Weighted = readonly (readonly [string, number])[];
 
-// Balloon mixes. Weights sum to 1 and drive both the garland and the palette chips.
+// The default garland mix. Weights sum to 1.
 export const PALETTES = {
   mix: [
     [COLOR.blush, 0.27],
@@ -23,38 +23,17 @@ export const PALETTES = {
     [COLOR.gold, 0.14],
     [COLOR.olive, 0.08],
   ],
-  bloom: [
-    [COLOR.blush, 0.5],
-    [COLOR.ivory, 0.3],
-    [COLOR.sand, 0.2],
-  ],
-  blue: [
-    [COLOR.blue, 0.5],
-    [COLOR.ivory, 0.3],
-    [COLOR.sand, 0.2],
-  ],
-  garden: [
-    [COLOR.olive, 0.2],
-    [COLOR.gold, 0.3],
-    [COLOR.ivory, 0.3],
-    [COLOR.sand, 0.2],
-  ],
-  golden: [
-    [COLOR.gold, 0.42],
-    [COLOR.sand, 0.3],
-    [COLOR.blush, 0.28],
-  ],
 } as const satisfies Record<string, Weighted>;
 
-export type PaletteName = keyof typeof PALETTES;
-
-export const PALETTE_LABELS: Record<PaletteName, string> = {
-  mix: "Swanky mix",
-  bloom: "Soft Bloom",
-  blue: "Blue Hour",
-  garden: "Garden Party",
-  golden: "Golden Hour",
-};
+/** A garland mix from a palette's colors: the first color leads, the rest accent. */
+export function mixFrom(colors: readonly string[]): Weighted {
+  if (!colors.length) return PALETTES.mix;
+  const weights =
+    colors.length === 3
+      ? [0.45, 0.33, 0.22]
+      : colors.map(() => 1 / colors.length);
+  return colors.map((c, i) => [c, weights[i]] as const);
+}
 
 export function pickWeighted(mix: Weighted, k: number) {
   let acc = 0;

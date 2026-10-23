@@ -1,10 +1,11 @@
 "use client";
 
-// Slush's page transition, rebuilt for the App Router. On an internal link we snapshot the
-// current page into a fixed stage, navigate without scrolling, and once the new route
-// commits we run the 3D carousel: the old page shrinks into a card and swings away left
-// while three brand-colored panels sweep past and the new page swings in from the right.
-// Reduced motion skips the carousel and navigates normally.
+// Slush's page transition, rebuilt for the App Router. The layout marks the page shell
+// with [data-shell] and the swapping content with [data-page]; the nav sits outside it.
+// On an internal link we snapshot the current page into a fixed stage, navigate without
+// scrolling, and once the new route commits we run the 3D carousel: the old page shrinks
+// into a card and swings away left while three brand-colored panels sweep past and the
+// new page swings in from the right. Reduced motion skips the carousel.
 import { usePathname, useRouter } from "next/navigation";
 import {
   createContext,
@@ -39,7 +40,6 @@ export function TransitionProvider({
   const pathname = usePathname();
   const { getLenis, reduced } = useMotion();
   const stageRef = useRef<HTMLDivElement>(null);
-  const shellRef = useRef<HTMLDivElement>(null);
   const pending = useRef<HTMLElement | null>(null);
   const running = useRef(false);
   const enterCallbacks = useRef(new Set<() => void>());
@@ -55,7 +55,7 @@ export function TransitionProvider({
     (old: HTMLElement | null) => {
       window.clearTimeout(failSafe.current);
       const stage = stageRef.current,
-        shell = shellRef.current;
+        shell = document.querySelector<HTMLElement>("[data-shell]");
       old?.remove();
       if (stage) {
         stage
@@ -82,7 +82,9 @@ export function TransitionProvider({
       if (running.current) return;
       const url = new URL(href, window.location.href);
       const stage = stageRef.current;
-      const page = shellRef.current?.querySelector<HTMLElement>("[data-page]");
+      const page = document.querySelector<HTMLElement>(
+        "[data-shell] [data-page]",
+      );
       if (
         reduced ||
         !stage ||
@@ -119,7 +121,7 @@ export function TransitionProvider({
   useLayoutEffect(() => {
     const old = pending.current;
     const stage = stageRef.current,
-      shell = shellRef.current;
+      shell = document.querySelector<HTMLElement>("[data-shell]");
     const next = shell?.querySelector<HTMLElement>("[data-page]");
     if (!old || !stage || !shell || !next) return;
     pending.current = null;
@@ -223,9 +225,7 @@ export function TransitionProvider({
 
   return (
     <TransitionContext.Provider value={value}>
-      <div ref={shellRef} className="page-shell">
-        {children}
-      </div>
+      {children}
       <div ref={stageRef} className="pt-stage" hidden aria-hidden="true">
         <div className="pt-panel" />
         <div className="pt-panel" />

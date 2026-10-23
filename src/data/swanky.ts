@@ -1,5 +1,6 @@
 export interface PortfolioItem {
   id: string;
+  story: string;
   title: string;
   category: string;
   image: string | null;
@@ -24,45 +25,106 @@ export const brand = {
   founderImage: null as string | null,
 };
 export const navigation = [
-  { label: "Work", href: "/gallery" },
-  { label: "Services", href: "/#services" },
-  { label: "How It Works", href: "/#process" },
-  { label: "About", href: "/#about" },
-  { label: "FAQ", href: "/#faq" },
+  { label: "Work", href: "/work" },
+  { label: "Services", href: "/services" },
+  { label: "Pick Up", href: "/pickup" },
+  { label: "Palettes", href: "/palettes" },
+  { label: "About", href: "/about" },
+  { label: "FAQ", href: "/faq" },
 ];
 // Owner-supplied brand boards, September 24, 2026. Board 11 supplies this menu.
-export const services = [
+export type ServiceSticker = "swoosh" | "bow" | "balloon" | "balloon-dog";
+export interface Service {
+  number: string;
+  slug: string;
+  href: string;
+  title: string;
+  description: string;
+  color: "blush" | "blue" | "gold" | "sand";
+  tag: string;
+  sticker: ServiceSticker;
+  lead: string;
+  includes: string[];
+  note: string;
+}
+// Titles are submitted with inquiries and mapped to GoHighLevel; keep them stable.
+// "includes" lists come only from the owner's pickup and delivery menu (board 11).
+export const services: Service[] = [
   {
     number: "01",
+    slug: "custom-installations",
+    href: "/services/custom-installations",
     title: "Custom Installations",
     description:
       "Arches, walls and balloon clouds designed for your space. A focal point for the occasion, in a palette that feels like you.",
-    color: "blue",
+    color: "blush",
     tag: "MADE FOR YOUR SPACE",
+    sticker: "swoosh",
+    lead: "The piece everyone gathers around. We design it for your room, your palette and the moment you want to remember.",
+    includes: [
+      "Balloon arches",
+      "Balloon walls",
+      "Helium arches",
+      "Balloon clouds",
+      "Pendant light balloons",
+      "Mailbox clusters",
+    ],
+    note: "Share your venue and a photo of the space if you have one. Size, setup and delivery are confirmed in your proposal.",
   },
   {
     number: "02",
+    slug: "garlands-backdrops",
+    href: "/services/garlands-backdrops",
     title: "Garlands + Backdrops",
     description:
       "Custom balloon garlands for backdrops, easels, marquee lights and step-and-repeat displays.",
-    color: "sage",
+    color: "blue",
     tag: "SET THE SCENE",
+    sticker: "bow",
+    lead: "Frame the photo wall, the welcome sign or the dessert table with a garland made in your colors.",
+    includes: [
+      "Custom balloon garlands",
+      "Backdrop installations",
+      "Marquee light installations",
+      "Step-and-repeat installations",
+      "Easel installations",
+    ],
+    note: "We design the balloons around your backdrop, marquee letters or easel. Any rentals are confirmed in your proposal.",
   },
   {
     number: "03",
+    slug: "helium-arrangements",
+    href: "/services/helium-arrangements",
     title: "Helium Arrangements",
     description:
       "Oversized helium balloons and bundles for the moments that call for something simple and special.",
-    color: "linen",
+    color: "gold",
     tag: "A LITTLE LIFT",
+    sticker: "balloon",
+    lead: "Something simple and special: an oversized balloon for the guest of honor or a bundle that makes an entrance.",
+    includes: ["Oversized helium balloons", "Helium bundles"],
+    note: "Tell us the colors and the occasion. Pickup or delivery is confirmed when we follow up.",
   },
   {
     number: "04",
+    slug: "pick-up",
+    href: "/pickup",
     title: "Pick Up + Celebrate",
     description:
       "Five- and ten-foot garlands, freestanding garlands and balloon kits. Choose your colors and share your plans.",
-    color: "clay",
+    color: "sand",
     tag: "YOUR CELEBRATION, YOUR WAY",
+    sticker: "balloon-dog",
+    lead: "Choose your colors, pick it up and make the party yours.",
+    includes: [
+      "5′ garland",
+      "10′ garland",
+      "Oversized helium",
+      "Helium bundles",
+      "Freestanding garlands",
+      "Balloon kits",
+    ],
+    note: "Pickup timing and location are confirmed when we follow up on your request.",
   },
 ];
 export const balloonMenu = {
@@ -95,6 +157,8 @@ export const balloonMenu = {
 export const portfolio: PortfolioItem[] = [
   {
     id: "botanical-greens",
+    story:
+      "A freestanding installation in sage, olive and deep green, finished with trailing greenery beside a venue column.",
     title: "Botanical Green Installation",
     category: "Botanical Greens",
     image: "/swanky/portfolio/botanical-green-installation.webp",
@@ -106,6 +170,8 @@ export const portfolio: PortfolioItem[] = [
   },
   {
     id: "pink-ivory",
+    story:
+      "A freestanding garland in soft pink and ivory, tucked with delicate white flowers beside a wooden barn door.",
     title: "Pink + Ivory Freestanding Garland",
     category: "Pink + Ivory",
     image: "/swanky/portfolio/pink-ivory-freestanding.webp",
@@ -117,6 +183,8 @@ export const portfolio: PortfolioItem[] = [
   },
   {
     id: "pink-lilac",
+    story:
+      "A pair of freestanding balloon pillars in pink and lilac, framing an indoor venue entrance.",
     title: "Pink + Lilac Balloon Pillars",
     category: "Pink + Lilac",
     image: "/swanky/portfolio/pink-lilac-pillars.webp",
@@ -153,37 +221,41 @@ export const budgetRanges = [
   "$5,000+",
   "I’m not sure yet",
 ];
-// Interpreted from the owner's mood boards. No numerical color specifications were supplied.
+// Brand values from Jenn's expanded brand guide (Canva p.5). The swatches add balloon
+// colors clients often ask for beyond the brand palette.
 export const brandColors = {
-  ink: "#39332e",
-  ivory: "#f7f4ed",
-  blue: "#8c9aa8",
-  blueDeep: "#4f6372",
-  sage: "#a7b5a0",
-  taupe: "#b4a18d",
-  chocolate: "#59473e",
+  ivory: "#F7F0E6",
+  olive: "#565522",
+  gold: "#C7AD50",
+  blue: "#A8BDCB",
+  blush: "#E8C3BA",
+  sand: "#C9B79F",
+  charcoal: "#252524",
 };
 export const swatches = [
-  { name: "Ivory", hex: "#f2eee5" },
-  { name: "Dusty blue", hex: "#8c9aa8" },
-  { name: "Sage", hex: "#a7b5a0" },
-  { name: "Taupe", hex: "#b4a18d" },
-  { name: "Chocolate", hex: "#59473e" },
-  { name: "Blush", hex: "#d6abb1" },
-  { name: "Lilac", hex: "#bcb4cd" },
-  { name: "Olive", hex: "#617563" },
-  { name: "Champagne", hex: "#d2c5a6" },
+  { name: "Ivory", hex: "#F7F0E6" },
+  { name: "Blush", hex: "#E8C3BA" },
+  { name: "Dusty blue", hex: "#A8BDCB" },
+  { name: "Golden", hex: "#C7AD50" },
+  { name: "Sand", hex: "#C9B79F" },
+  { name: "Olive", hex: "#565522" },
+  { name: "Sage", hex: "#A7B5A0" },
+  { name: "Lilac", hex: "#BCB4CD" },
+  { name: "Rose", hex: "#CF8BAF" },
   { name: "Bordeaux", hex: "#764650" },
-  { name: "Rose", hex: "#cf8baf" },
-  { name: "Ink", hex: "#39332e" },
+  { name: "Chocolate", hex: "#59473E" },
+  { name: "Charcoal", hex: "#252524" },
 ];
+// Dark swatches take an ivory check mark.
+export const darkSwatches = ["#565522", "#764650", "#59473E", "#252524"];
+// Palette names are placeholders until Jenn approves them.
 export const vibes = [
-  { name: "Signature Swanky", colors: ["#f2eee5", "#8c9aa8", "#a7b5a0"] },
-  { name: "Soft Bloom", colors: ["#d6abb1", "#f2eee5", "#bcb4cd"] },
-  { name: "Natural Neutrals", colors: ["#f2eee5", "#b4a18d", "#59473e"] },
-  { name: "Garden Gathering", colors: ["#a7b5a0", "#617563", "#f2eee5"] },
-  { name: "A Little Romance", colors: ["#764650", "#d6abb1", "#d2c5a6"] },
-  { name: "Build My Own", colors: ["#8c9aa8", "#d6abb1", "#bcb4cd"] },
+  { name: "Signature Swanky", colors: ["#F7F0E6", "#E8C3BA", "#565522"] },
+  { name: "Soft Bloom", colors: ["#E8C3BA", "#F7F0E6", "#C9B79F"] },
+  { name: "Blue Hour", colors: ["#A8BDCB", "#F7F0E6", "#C9B79F"] },
+  { name: "Garden Party", colors: ["#565522", "#C7AD50", "#F7F0E6"] },
+  { name: "Golden Hour", colors: ["#C7AD50", "#C9B79F", "#E8C3BA"] },
+  { name: "Build My Own", colors: ["#A8BDCB", "#E8C3BA", "#BCB4CD"] },
 ];
 export const processSteps = [
   {
@@ -207,38 +279,50 @@ export const processSteps = [
       "The final design is prepared for your event and brought to life.",
   },
 ];
-export const faqs = [
+export const faqTopics = ["Booking", "Design", "Pickup + delivery"] as const;
+export const faqs: {
+  topic: (typeof faqTopics)[number];
+  question: string;
+  answer: string;
+}[] = [
   {
+    topic: "Pickup + delivery",
     question: "Can I pick up my balloons?",
     answer:
       "The balloon menu includes pickup options such as five- and ten-foot garlands, oversized helium balloons, helium bundles, freestanding garlands and balloon kits. Let us know what you have in mind so pickup details can be confirmed.",
   },
   {
+    topic: "Pickup + delivery",
     question: "Where does Swanky Balloon Co. serve?",
     answer:
       "Swanky serves Nashville, Brentwood and communities throughout Middle Tennessee. Share your venue in the inquiry so travel and setup details can be confirmed.",
   },
   {
+    topic: "Booking",
     question: "How quickly will I hear back?",
     answer:
       "Most inquiries receive a response within approximately 24–48 hours. Event weekends and holidays may affect response times.",
   },
   {
+    topic: "Booking",
     question: "What should I include in my inquiry?",
     answer:
       "Include the event date, location, occasion, theme, preferred colors, inspiration and estimated budget. The more context you provide, the easier it is to recommend the right direction.",
   },
   {
+    topic: "Design",
     question: "Can I submit inspiration photos?",
     answer:
-      "Yes. Share an inspiration link in your inquiry. You can also preview a file in this concept; files are not uploaded or sent yet.",
+      "Yes. Share an inspiration link in your inquiry, such as a Pinterest board or an Instagram post. File uploads are coming soon.",
   },
   {
+    topic: "Pickup + delivery",
     question: "Are delivery, setup and removal included?",
     answer:
       "Options may vary by project. The final proposal should clearly explain the services included for that event.",
   },
   {
+    topic: "Booking",
     question: "How do I reserve my event?",
     answer:
       "After the project details are reviewed, Swanky will provide the next steps required to approve and reserve the event.",

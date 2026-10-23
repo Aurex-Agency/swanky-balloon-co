@@ -3,15 +3,17 @@
 import { useRef } from "react";
 import { confetti, popWord } from "@/lib/swanky/confetti";
 import { gsap, useGSAP } from "@/lib/swanky/gsap";
+import { ambient } from "@/lib/swanky/ambient";
 import {
   PALETTES,
   pickWeighted,
   shineFor,
-  type PaletteName,
+  type Weighted,
 } from "@/lib/swanky/tokens";
 import { useReducedMotion } from "../motion/motion-provider";
 import { usePageEnter } from "../motion/transition-provider";
 
+/** Dispatch with a weighted color mix (see mixFrom) to recolor interactive garlands. */
 export const PALETTE_EVENT = "swanky:palette";
 export const POP_EVENT = "swanky:pop";
 
@@ -41,8 +43,7 @@ export function GarlandMotion({ svg, interactive, className, id }: Props) {
 
       // Recolor: fills ripple along the garland, start to end.
       const recolor = (e: Event) => {
-        const pal =
-          PALETTES[(e as CustomEvent<PaletteName>).detail] ?? PALETTES.mix;
+        const pal = (e as CustomEvent<Weighted>).detail ?? PALETTES.mix;
         balls.forEach((b, i) => {
           const fill = pickWeighted(pal, +b.dataset.k!);
           const circle = b.querySelector("circle")!,
@@ -96,25 +97,29 @@ export function GarlandMotion({ svg, interactive, className, id }: Props) {
             1.05,
           );
         inner.forEach((b) =>
-          gsap.to(b, {
-            y: gsap.utils.random(-7, -3),
-            duration: gsap.utils.random(2, 3.6),
-            ease: "sine.inOut",
-            yoyo: true,
-            repeat: -1,
-            delay: 1.6 + Math.random() * 2,
-          }),
+          ambient(
+            gsap.to(b, {
+              y: gsap.utils.random(-7, -3),
+              duration: gsap.utils.random(2, 3.6),
+              ease: "sine.inOut",
+              yoyo: true,
+              repeat: -1,
+              delay: 1.6 + Math.random() * 2,
+            }),
+          ),
         );
         sparkles.forEach((s, i) =>
-          gsap.to(s, {
-            scale: 0.7,
-            rotate: 20,
-            duration: 1.4 + i * 0.2,
-            ease: "sine.inOut",
-            yoyo: true,
-            repeat: -1,
-            delay: 2.4,
-          }),
+          ambient(
+            gsap.to(s, {
+              scale: 0.7,
+              rotate: 20,
+              duration: 1.4 + i * 0.2,
+              ease: "sine.inOut",
+              yoyo: true,
+              repeat: -1,
+              delay: 2.4,
+            }),
+          ),
         );
       });
 
