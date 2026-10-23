@@ -105,7 +105,7 @@ export default async function WorkStory({ params }: PageProps<"/work/[slug]">) {
         <div className="next-story">
           <p className="label">Next celebration</p>
           <h2 id="story-next">
-            <TransitionLink href={`/work/${next.id}`} data-cursor="View">
+            <TransitionLink href={`/work/${next.id}`}>
               {next.title} <span aria-hidden="true">→</span>
             </TransitionLink>
           </h2>

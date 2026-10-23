@@ -5,7 +5,7 @@
 import { useRef } from "react";
 import { gsap, useGSAP } from "@/lib/swanky/gsap";
 import { useReducedMotion } from "./motion-provider";
-import { usePageEnter } from "./transition-provider";
+import { usePageEnter, usePageTransition } from "./transition-provider";
 
 export function PageIntro({
   children,
@@ -17,6 +17,7 @@ export function PageIntro({
   const ref = useRef<HTMLDivElement>(null);
   const reduced = useReducedMotion();
   const play = useRef<() => void>(() => {});
+  const { isTransitioning } = usePageTransition();
 
   useGSAP(
     (_, contextSafe) => {
@@ -25,7 +26,9 @@ export function PageIntro({
       const chars = root.querySelectorAll(".wordmark .ch");
       const blocks = root.querySelectorAll("[data-load]");
       const stickers = root.querySelectorAll("[data-hero-sticker]");
-      if (reduced) {
+      // A page arriving by transition is shown finished inside the swinging card, so the
+      // carousel carries the entrance and nothing pops in afterwards.
+      if (reduced || isTransitioning()) {
         root.classList.add("intro-ready");
         return;
       }

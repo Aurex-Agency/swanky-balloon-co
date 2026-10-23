@@ -4,6 +4,8 @@
 }
 html {
   -webkit-text-size-adjust: 100%;
+  /* Keeps the page from shifting when scrolling is locked during a page transition. */
+  scrollbar-gutter: stable;
 }
 body {
   margin: 0;

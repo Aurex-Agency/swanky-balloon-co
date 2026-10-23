@@ -49,7 +49,6 @@ export default function Home() {
                   className="hero-sticker hs-dog"
                   data-hero-sticker=""
                   data-drag=""
-                  data-cursor="Throw me"
                 >
                   <div data-float="">
                     <Sticker name="balloon-dog" />
@@ -59,7 +58,6 @@ export default function Home() {
                   className="hero-sticker hs-star"
                   data-hero-sticker=""
                   data-drag=""
-                  data-cursor="Throw me"
                 >
                   <div data-float="">
                     <Sticker name="sparkle" />
@@ -69,7 +67,6 @@ export default function Home() {
                   className="hero-sticker hs-seal"
                   data-hero-sticker=""
                   data-drag=""
-                  data-cursor="Throw me"
                 >
                   <div data-float="">
                     <Sticker name="seal-blush" />
@@ -79,7 +76,6 @@ export default function Home() {
                   className="hero-sticker hs-cake"
                   data-hero-sticker=""
                   data-drag=""
-                  data-cursor="Throw me"
                 >
                   <div data-float="">
                     <Sticker name="cake" />
@@ -189,7 +185,6 @@ export default function Home() {
               href={`/work/${item.id}`}
               className="photo-card"
               data-card=""
-              data-cursor="View"
             >
               <Image
                 src={item.image!}

@@ -104,7 +104,6 @@ export function StackingSlider({ label, children }: Props) {
       <div
         ref={ref}
         className="stack-wrap"
-        data-cursor="Drag"
         tabIndex={0}
         role="group"
         aria-label={`${label}, card ${index + 1} of ${count}. Use the arrow keys to move.`}

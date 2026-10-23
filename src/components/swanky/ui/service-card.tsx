@@ -9,7 +9,6 @@ export function ServiceCard({ service: s }: { service: Service }) {
       href={s.href}
       className={`service-card tone-${s.color}`}
       data-card=""
-      data-cursor="View"
     >
       <span className="label">{s.tag}</span>
       <Sticker name={s.sticker} />

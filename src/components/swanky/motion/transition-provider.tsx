@@ -2,10 +2,13 @@
 
 // Slush's page transition, rebuilt for the App Router. The layout marks the page shell
 // with [data-shell] and the swapping content with [data-page]; the nav sits outside it.
-// On an internal link we snapshot the current page into a fixed stage, navigate without
-// scrolling, and once the new route commits we run the 3D carousel: the old page shrinks
-// into a card and swings away left while three brand-colored panels sweep past and the
-// new page swings in from the right. Reduced motion skips the carousel.
+//
+// On an internal link we snapshot what is on screen into a fixed stage and start pushing
+// it back right away, then navigate. When the new route commits, the old page swings away
+// left while brand-colored panels sweep past and the new page swings in from the right
+// and lands flat. Everything runs on the Web Animations API with transforms only, so the
+// browser's compositor keeps it smooth even while React mounts the new page. The
+// transition ends the moment the new page lands. Reduced motion skips it entirely.
 import { usePathname, useRouter } from "next/navigation";
 import {
   createContext,
@@ -14,6 +17,8 @@ import {
   useLayoutEffect,
   useRef,
 } from "react";
+import { setAmbientSuspended } from "@/lib/swanky/ambient";
+import { FLOAT } from "@/lib/swanky/eases";
 import { BRAND_COLORS, gsap, ScrollTrigger } from "@/lib/swanky/gsap";
 import { useMotion } from "./motion-provider";
 
@@ -28,8 +33,60 @@ const TransitionContext = createContext<TransitionContextValue>({
   onEnter: () => () => {},
 });
 
-const SWING = 1.25; // the carousel swing (Slush: 1.25s)
-const PUSH = 0.8; // push back and final settle (Slush: 0.8s)
+// Timing in ms. Slush runs ~3.6s end to end; this lands in ~1.75s.
+const PUSH = 550; // old page pushes back into a card
+const OVERLAP = 200; // the swing starts this long before the push ends
+const SWING = 900; // carousel swing
+const SETTLE = 500; // new page comes forward and flattens
+
+// The float spring as a CSS linear() easing, so the compositor can run it.
+const FLOAT_CSS = (() => {
+  const stops = FLOAT.replace(/^M/, "")
+    .split(" L")
+    .map((p) => p.split(",").map(Number))
+    .map(([t, y]) => `${y} ${(t * 100).toFixed(1)}%`);
+  return `linear(${stops.join(", ")})`;
+})();
+const GLIDE_CSS = "cubic-bezier(0.65, 0.05, 0, 1)";
+const floatEase = () =>
+  typeof CSS !== "undefined" &&
+  CSS.supports("animation-timing-function", "linear(0, 1)")
+    ? FLOAT_CSS
+    : "cubic-bezier(0.34, 1.25, 0.64, 1)";
+
+const T = (x: number, ry: number, z: number) =>
+  `translate3d(${x}%, 0, ${Math.round(z)}px) rotateY(${ry}deg)`;
+
+/** Copies only the sections that are on screen; the rest become same-height spacers. */
+function snapshot(page: HTMLElement) {
+  const vh = window.innerHeight;
+  const copy = (el: Element): Node => {
+    const r = el.getBoundingClientRect();
+    if (r.bottom < 0 || r.top > vh) {
+      const spacer = document.createElement("div");
+      spacer.style.height = `${r.height}px`;
+      return spacer;
+    }
+    return el.cloneNode(true);
+  };
+  const clone = page.cloneNode(false) as HTMLElement;
+  clone.removeAttribute("data-page");
+  for (const child of Array.from(page.children)) {
+    if (child.tagName === "MAIN") {
+      const main = child.cloneNode(false) as HTMLElement;
+      main.removeAttribute("id");
+      for (const section of Array.from(child.children))
+        main.appendChild(copy(section));
+      clone.appendChild(main);
+    } else {
+      clone.appendChild(copy(child));
+    }
+  }
+  clone.style.transform = `translateY(${-window.scrollY}px)`;
+  return clone;
+}
+
+type Pending = { old: HTMLElement; panels: HTMLElement[]; start: number };
 
 export function TransitionProvider({
   children,
@@ -40,7 +97,7 @@ export function TransitionProvider({
   const pathname = usePathname();
   const { getLenis, reduced } = useMotion();
   const stageRef = useRef<HTMLDivElement>(null);
-  const pending = useRef<HTMLElement | null>(null);
+  const pending = useRef<Pending | null>(null);
   const running = useRef(false);
   const enterCallbacks = useRef(new Set<() => void>());
   const failSafe = useRef<number | undefined>(undefined);
@@ -52,27 +109,25 @@ export function TransitionProvider({
   }, []);
 
   const finish = useCallback(
-    (old: HTMLElement | null) => {
+    (old: HTMLElement | null, panels: HTMLElement[]) => {
       window.clearTimeout(failSafe.current);
-      const stage = stageRef.current,
-        shell = document.querySelector<HTMLElement>("[data-shell]");
-      old?.remove();
-      if (stage) {
-        stage
-          .querySelectorAll<HTMLElement>(".pt-panel")
-          .forEach((p) => (p.style.display = "none"));
-        stage.hidden = true;
-      }
+      const stage = stageRef.current;
+      const shell = document.querySelector<HTMLElement>("[data-shell]");
       const next = shell?.querySelector<HTMLElement>("[data-page]");
-      if (shell) gsap.set(shell, { clearProps: "all" });
-      if (next)
-        gsap.set(next, {
-          clearProps: "transform,borderRadius,height,overflow",
-        });
+      for (const el of [old, next, ...panels]) {
+        el?.getAnimations().forEach((a) => a.cancel());
+      }
+      old?.remove();
+      panels.forEach((p) => p.removeAttribute("style"));
+      if (stage) stage.hidden = true;
+      shell?.removeAttribute("style");
+      next?.removeAttribute("style");
       running.current = false;
-      flushEnter();
+      setAmbientSuspended(false);
       getLenis()?.start();
-      ScrollTrigger.refresh();
+      flushEnter();
+      // Re-measure scroll positions after the frame that shows the new page.
+      requestAnimationFrame(() => ScrollTrigger.refresh());
     },
     [flushEnter, getLenis],
   );
@@ -95,124 +150,131 @@ export function TransitionProvider({
         return;
       }
       running.current = true;
+      setAmbientSuspended(true);
       getLenis()?.stop();
+
+      const w = window.innerWidth;
       const old = document.createElement("div");
       old.className = "pt-old";
       old.setAttribute("aria-hidden", "true");
       old.inert = true;
-      const clone = page.cloneNode(true) as HTMLElement;
-      clone.removeAttribute("data-page");
-      clone.style.transform = `translateY(${-window.scrollY}px)`;
-      old.appendChild(clone);
+      old.appendChild(snapshot(page));
       stage.appendChild(old);
+
+      const panels = Array.from(
+        stage.querySelectorAll<HTMLElement>(".pt-panel"),
+      );
+      const colors = gsap.utils.shuffle(BRAND_COLORS.slice(0, 5));
+      const starts = [
+        T(-200, 45, -0.5 * w),
+        T(200, -45, -0.5 * w),
+        T(200, -45, -0.25 * w),
+      ];
+      panels.forEach((p, i) => {
+        p.style.display = "block";
+        p.style.backgroundColor = colors[i];
+        p.style.transform = starts[i];
+      });
       stage.hidden = false;
-      pending.current = old;
+
+      // Push back immediately so the click feels instant while the route loads.
+      const ease = floatEase();
+      const push = { duration: PUSH, easing: ease, fill: "forwards" } as const;
+      old.animate(
+        [{ transform: T(0, 0, 0) }, { transform: T(0, 0, -w) }],
+        push,
+      );
+      panels[0].animate(
+        [{ transform: starts[0] }, { transform: T(-100, 22.5, -0.85 * w) }],
+        push,
+      );
+      panels[1].animate(
+        [{ transform: starts[1] }, { transform: T(100, -22.5, -0.85 * w) }],
+        push,
+      );
+
+      pending.current = { old, panels, start: performance.now() };
       // If the route never commits (offline, error), put everything back.
       failSafe.current = window.setTimeout(() => {
         pending.current = null;
-        finish(old);
-      }, 6000);
+        finish(old, panels);
+      }, 8000);
       router.push(href, { scroll: false });
     },
     [finish, getLenis, reduced, router],
   );
 
-  // The new route has committed: run the carousel between the snapshot and the new page.
+  // The new route has committed: swing the snapshot out and the new page in.
   useLayoutEffect(() => {
-    const old = pending.current;
-    const stage = stageRef.current,
-      shell = document.querySelector<HTMLElement>("[data-shell]");
+    const p = pending.current;
+    const shell = document.querySelector<HTMLElement>("[data-shell]");
     const next = shell?.querySelector<HTMLElement>("[data-page]");
-    if (!old || !stage || !shell || !next) return;
+    if (!p || !shell || !next) return;
     pending.current = null;
     window.clearTimeout(failSafe.current);
+
+    const w = window.innerWidth;
+    const { old, panels } = p;
+    Object.assign(shell.style, {
+      position: "fixed",
+      inset: "0",
+      zIndex: "102",
+      perspective: "1000px",
+      overflow: "hidden",
+    });
+    Object.assign(next.style, {
+      height: "100vh",
+      overflow: "hidden",
+      borderRadius: "2em",
+      transform: T(200, -45, -0.5 * w),
+      willChange: "transform",
+    });
     window.scrollTo(0, 0);
     getLenis()?.scrollTo(0, { immediate: true, force: true });
 
-    const w = window.innerWidth;
-    const panels = Array.from(stage.querySelectorAll<HTMLElement>(".pt-panel"));
-    const colors = gsap.utils.shuffle(BRAND_COLORS.slice(0, 5));
-    panels.forEach((p, i) =>
-      gsap.set(p, { display: "block", backgroundColor: colors[i] }),
+    const ease = floatEase();
+    const delay = Math.max(0, PUSH - OVERLAP - (performance.now() - p.start));
+    // The swing overlaps the end of the push, so it gives only end keyframes: the browser
+    // picks up from wherever the push is, with no jump between the two.
+    const swing = {
+      duration: SWING,
+      delay,
+      easing: ease,
+      fill: "forwards",
+    } as const;
+    old.animate([{ transform: T(-200, 45, -0.5 * w) }], swing);
+    panels[0].animate([{ transform: T(-300, 67.5, -0.25 * w) }], swing);
+    panels[1].animate([{ transform: T(-100, 22.5, -0.85 * w) }], swing);
+    panels[2].animate(
+      [
+        { transform: T(200, -45, -0.25 * w) },
+        { transform: T(100, -22.5, -0.85 * w) },
+      ],
+      swing,
     );
-
-    gsap
-      .timeline({ defaults: { ease: "float" }, onComplete: () => finish(old) })
-      .set(shell, {
-        position: "fixed",
-        top: 0,
-        left: 0,
-        width: "100%",
-        height: "100vh",
-        zIndex: 102,
-        perspective: 1000,
-        overflow: "hidden",
-      })
-      .set(next, {
-        height: "100vh",
-        overflow: "hidden",
-        borderRadius: "2em",
-        rotateY: -45,
-        xPercent: 200,
-        z: -0.5 * w,
-      })
-      .set(panels[0], { z: -0.5 * w, rotateY: 45, xPercent: -200 })
-      .set(panels[1], { z: -0.5 * w, rotateY: -45, xPercent: 200 })
-      .set(panels[2], { z: -0.25 * w, rotateY: -45, xPercent: 200 })
-      .to(old, { z: -1 * w, duration: PUSH })
-      .to(
-        panels[0],
-        { xPercent: -100, rotateY: 22.5, z: -0.85 * w, duration: PUSH },
-        "<",
-      )
-      .to(
-        panels[1],
-        { xPercent: 100, rotateY: -22.5, z: -0.85 * w, duration: PUSH },
-        "<",
-      )
-      .to(
-        old,
-        { rotateY: 45, xPercent: -200, z: -0.5 * w, duration: SWING },
-        ">-=0.25",
-      )
-      .to(
-        panels[0],
-        { xPercent: -300, rotateY: 67.5, z: -0.25 * w, duration: SWING },
-        "<",
-      )
-      .to(
-        panels[1],
-        { xPercent: -100, rotateY: 22.5, z: -0.85 * w, duration: SWING },
-        "<",
-      )
-      .to(
-        panels[2],
-        { xPercent: 100, rotateY: -22.5, z: -0.85 * w, duration: SWING },
-        "<",
-      )
-      .to(next, { rotateY: 0, xPercent: 0, z: -1 * w, duration: SWING }, "<")
-      .to(
-        next,
-        { z: 0, borderRadius: "0em", ease: "glide", duration: PUSH },
-        ">-=0.5",
-      )
-      .to(
-        panels[1],
-        { xPercent: -200, rotateY: 45, z: -0.25 * w, duration: 1.875 },
-        "<+=0.2",
-      )
-      .to(
-        panels[2],
+    // One track for the new page: swing in on the float spring, then glide forward flat.
+    const landing = next.animate(
+      [
         {
-          xPercent: 200,
-          rotateY: -45,
-          z: -0.25 * w,
-          duration: 1.875,
-          onStart: flushEnter,
+          transform: T(200, -45, -0.5 * w),
+          borderRadius: "2em",
+          easing: ease,
         },
-        "<",
-      );
-  }, [pathname, finish, flushEnter, getLenis]);
+        {
+          transform: T(0, 0, -w),
+          borderRadius: "2em",
+          easing: GLIDE_CSS,
+          offset: SWING / (SWING + SETTLE),
+        },
+        { transform: T(0, 0, 0), borderRadius: "0em" },
+      ],
+      { duration: SWING + SETTLE, delay, fill: "forwards" },
+    );
+    landing.finished.then(
+      () => finish(old, panels),
+      () => {},
+    );
+  }, [pathname, finish, getLenis]);
 
   const value: TransitionContextValue = {
     navigate,
@@ -238,8 +300,8 @@ export function TransitionProvider({
 export const usePageTransition = () => useContext(TransitionContext);
 
 /**
- * Runs `cb` when the page is ready to animate in: immediately on a fresh load, or at
- * Slush's cue near the end of the carousel when the page arrives by transition.
+ * Runs `cb` when the page is ready: immediately on a fresh load, or once the carousel has
+ * landed when the page arrives by transition.
  */
 export function usePageEnter(cb: () => void) {
   const { isTransitioning, onEnter } = useContext(TransitionContext);
