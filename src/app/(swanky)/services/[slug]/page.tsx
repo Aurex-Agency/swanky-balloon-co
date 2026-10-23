@@ -116,7 +116,6 @@ export default async function ServiceDetail({
               href={`/work/${item.id}`}
               className="photo-card"
               data-card=""
-              data-cursor="View"
             >
               <Image
                 src={item.image!}

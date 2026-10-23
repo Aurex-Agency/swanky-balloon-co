@@ -1,4 +1,4 @@
-/* Site chrome: ticker, nav, menu panel, footer, cursor label, motion toggle. */
+/* Site chrome: ticker, nav, menu panel, footer, motion toggle. */
 
 /* ---------- Ticker ---------- */
 .ticker {
@@ -232,29 +232,7 @@ html.menu-open {
   }
 }
 
-/* ---------- Cursor label + demo badge ---------- */
-.cursor-label {
-  position: fixed;
-  left: 0;
-  top: 0;
-  z-index: 120;
-  pointer-events: none;
-  background: var(--olive);
-  color: var(--ivory);
-  font: 700 0.66rem/1 var(--font-ui);
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  padding: 9px 12px;
-  border-radius: var(--r-pill);
-  opacity: 0;
-  transition: opacity 0.2s;
-}
-.cursor-label.on {
-  opacity: 1;
-}
-.cursor-label:empty {
-  display: none;
-}
+/* ---------- Demo badge ---------- */
 .demo-badge {
   position: fixed;
   left: max(12px, env(safe-area-inset-left, 0px));

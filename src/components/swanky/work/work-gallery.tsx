@@ -81,7 +81,6 @@ export function WorkGallery({ items, categories }: Props) {
             <button
               type="button"
               className="work-photo"
-              data-cursor="View"
               aria-label={`View ${item.title}`}
               onClick={() => {
                 setOpen(item);

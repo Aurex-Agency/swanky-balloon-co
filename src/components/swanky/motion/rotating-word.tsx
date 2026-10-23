@@ -4,7 +4,7 @@
 // old word lifts out, the new one slants in by character. Screen readers get the full
 // sentence once (see the sr-only text beside it), so this span is aria-hidden.
 import { useRef } from "react";
-import { isAmbientPaused } from "@/lib/swanky/ambient";
+import { isAmbientHalted } from "@/lib/swanky/ambient";
 import { gsap, SplitText, useGSAP } from "@/lib/swanky/gsap";
 import { useReducedMotion } from "./motion-provider";
 
@@ -17,7 +17,7 @@ export function RotatingWord({ words }: { words: string[] }) {
       if (!el || reduced) return;
       let i = 0;
       const next = contextSafe!(() => {
-        if (document.hidden || isAmbientPaused()) return;
+        if (document.hidden || isAmbientHalted()) return;
         i = (i + 1) % words.length;
         gsap.to(el, {
           yPercent: -60,

@@ -6,7 +6,6 @@ import "lenis/dist/lenis.css";
 import "./swanky.css";
 import { AttributionCapture } from "@/components/attribution";
 import { Sticker } from "@/components/swanky/brand/sticker";
-import { CursorLabel } from "@/components/swanky/chrome/cursor-label";
 import { SiteFooter } from "@/components/swanky/chrome/site-footer";
 import { SiteNav } from "@/components/swanky/chrome/site-nav";
 import { Ticker } from "@/components/swanky/chrome/ticker";
@@ -86,7 +85,6 @@ export default function SwankyLayout({
                 <SiteFooter />
               </div>
             </div>
-            <CursorLabel />
           </TransitionProvider>
         </MotionProvider>
         {demo && <span className="demo-badge">Concept preview</span>}
