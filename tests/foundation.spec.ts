@@ -1,6 +1,6 @@
 import { test, expect, type Page } from "@playwright/test";
 
-// Motion system: garland, recolor, carousel transition, reduced motion, pause, 404.
+// Motion system: garland, recolor, balloon transition, reduced motion, pause, 404.
 
 async function hydrated(page: Page) {
   await expect(
@@ -28,26 +28,40 @@ test("hero garland renders and recolors", async ({ page }) => {
     .toBeLessThanOrEqual(3);
 });
 
-test("carousel transition navigates and cleans up", async ({ page }) => {
+test("balloon transition covers the swap and cleans up", async ({ page }) => {
   await page.goto("/");
   await hydrated(page);
   await page
     .locator(".hero")
     .getByRole("link", { name: "See the work" })
     .click();
+  // The balloons cover the screen before the route changes.
+  await expect(page.locator(".curtain")).toBeVisible();
+  // The balloons are pre-drawn into canvas layers.
+  expect(
+    await page
+      .locator("canvas.curtain-layer")
+      .first()
+      .evaluate((c) => (c as HTMLCanvasElement).width),
+  ).toBeGreaterThan(0);
   // Generous timeouts cover the dev server compiling the route on first request.
   await expect(page).toHaveURL(/\/work$/, { timeout: 15000 });
-  await expect(page.locator(".pt-stage")).toBeHidden({ timeout: 8000 });
+  await expect(page.locator(".curtain")).toBeHidden({ timeout: 8000 });
   await expect(
     page.getByRole("heading", { name: "It’s all in the details." }),
   ).toBeVisible();
-  await expect(page.locator(".pt-old")).toHaveCount(0);
+  await expect(page.locator("html")).not.toHaveAttribute(
+    "data-transitioning",
+    /./,
+  );
   await page.getByRole("link", { name: "Swanky Balloon Co. home" }).click();
   await expect(page).toHaveURL(/\/$/, { timeout: 15000 });
-  await expect(page.locator(".pt-stage")).toBeHidden({ timeout: 8000 });
+  await expect(page.locator(".curtain")).toBeHidden({ timeout: 8000 });
 });
 
-test("reduced motion navigates without the carousel", async ({ browser }) => {
+test("reduced motion fades instead of showing balloons", async ({
+  browser,
+}) => {
   const context = await browser.newContext({ reducedMotion: "reduce" });
   const page = await context.newPage();
   await page.goto("/");
@@ -57,7 +71,14 @@ test("reduced motion navigates without the carousel", async ({ browser }) => {
     .getByRole("link", { name: "See the work" })
     .click();
   await expect(page).toHaveURL(/\/work$/, { timeout: 15000 });
-  await expect(page.locator(".pt-stage")).toBeHidden();
+  await expect(page.locator(".curtain")).toBeHidden({ timeout: 8000 });
+  // No balloons are ever drawn for reduced motion.
+  expect(
+    await page
+      .locator("canvas.curtain-layer")
+      .first()
+      .evaluate((c) => (c as HTMLCanvasElement).width),
+  ).toBe(300);
   await context.close();
 });
 

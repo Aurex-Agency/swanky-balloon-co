@@ -24,9 +24,9 @@ async function hydrated(page: Page) {
     timeout: 15000,
   });
 }
-// After a link click, wait for the carousel transition to finish.
+// After a link click, wait for the balloon transition to finish.
 async function settled(page: Page) {
-  await expect(page.locator(".pt-stage")).toBeHidden({ timeout: 10000 });
+  await expect(page.locator(".curtain")).toBeHidden({ timeout: 10000 });
 }
 
 test("every page renders one h1 without runtime errors", async ({ page }) => {
