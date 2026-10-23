@@ -52,7 +52,8 @@ const floatEase = () =>
   typeof CSS !== "undefined" &&
   CSS.supports("animation-timing-function", "linear(0, 1)")
     ? FLOAT_CSS
-    : "cubic-bezier(0.34, 1.25, 0.64, 1)";
+    : // Browsers without linear() get a smooth ease-out (expo) rather than a bounce.
+      "cubic-bezier(0.16, 1, 0.3, 1)";
 
 const T = (x: number, ry: number, z: number) =>
   `translate3d(${x}%, 0, ${Math.round(z)}px) rotateY(${ry}deg)`;
