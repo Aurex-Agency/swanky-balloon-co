@@ -152,10 +152,11 @@
   cursor: pointer;
 }
 
-/* Intro states: hidden only once JS has confirmed it is running (html.js), and never for
-   longer than 4s even if a script fails, so the page is always complete at rest. */
-.js .garland[data-inflate]:not(.intro-ready) :is(.bi, .spk),
-.js
+/* Intro states: hidden only once JS has confirmed it is running (html.js), until the
+   inline intro boot takes over on first load (html.intro-booted, see intro-boot.ts), and
+   never for longer than 4s even if a script fails, so the page is always complete at rest. */
+.js:not(.intro-booted) .garland[data-inflate]:not(.intro-ready) :is(.bi, .spk),
+.js:not(.intro-booted)
   [data-intro]:not(.intro-ready)
   :is([data-load], [data-hero-sticker], .wordmark .ch) {
   opacity: 0;

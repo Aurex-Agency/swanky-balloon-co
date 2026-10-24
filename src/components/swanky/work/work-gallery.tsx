@@ -1,9 +1,10 @@
 "use client";
 
 import Image from "next/image";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { PortfolioItem } from "@/data/swanky";
-import { Flip, gsap, useGSAP } from "@/lib/swanky/gsap";
+import type { Flip } from "gsap/Flip";
+import { gsap, loadFlip, useGSAP } from "@/lib/swanky/gsap";
 import { useReducedMotion } from "../motion/motion-provider";
 import { TransitionLink } from "../motion/transition-link";
 
@@ -14,6 +15,11 @@ export function WorkGallery({ items, categories }: Props) {
   const ref = useRef<HTMLDivElement>(null);
   const dialogRef = useRef<HTMLDialogElement>(null);
   const flipState = useRef<Flip.FlipState | null>(null);
+  // Loaded after the page is up; until then filters switch without animating.
+  const flip = useRef<typeof Flip | null>(null);
+  useEffect(() => {
+    loadFlip().then((f) => (flip.current = f));
+  }, []);
   const reduced = useReducedMotion();
   const [filter, setFilter] = useState("All");
   const [open, setOpen] = useState<PortfolioItem | null>(null);
@@ -22,8 +28,8 @@ export function WorkGallery({ items, categories }: Props) {
   // Animate cards from where they were to where the new filter puts them.
   useGSAP(
     () => {
-      if (!flipState.current || reduced) return;
-      Flip.from(flipState.current, {
+      if (!flipState.current || !flip.current || reduced) return;
+      flip.current.from(flipState.current, {
         duration: 0.5,
         ease: "glide",
         scale: true,
@@ -42,8 +48,8 @@ export function WorkGallery({ items, categories }: Props) {
   );
 
   const choose = (c: string) => {
-    if (ref.current)
-      flipState.current = Flip.getState(
+    if (ref.current && flip.current)
+      flipState.current = flip.current.getState(
         ref.current.querySelectorAll(".work-card, .filter-active"),
       );
     setFilter(c);

@@ -57,6 +57,7 @@
   }
   .ticker .motion-toggle {
     padding: 0 9px;
+    font-size: 0.64rem;
   }
 }
 .motion-toggle {
@@ -67,7 +68,7 @@
   border-radius: var(--r-pill);
   background: transparent;
   color: inherit;
-  font: 600 0.66rem/1 var(--font-ui);
+  font: 600 0.7rem/1 var(--font-ui);
   letter-spacing: 0.1em;
   text-transform: uppercase;
   cursor: pointer;
@@ -219,6 +220,19 @@ html.menu-open {
   text-decoration: none;
   font-size: 1.05rem;
 }
+@media (pointer: coarse) {
+  .footer-links ul {
+    gap: 0;
+  }
+  .footer-links a,
+  .footer-bottom a {
+    display: inline-block;
+    padding-block: 12px;
+  }
+  .footer-bottom a {
+    margin-block: -12px;
+  }
+}
 .footer-links a:hover {
   text-decoration: underline;
   text-underline-offset: 4px;
@@ -263,7 +277,7 @@ html.menu-open {
   border-radius: var(--r-pill);
   background: var(--ivory);
   color: var(--olive);
-  font: 600 0.66rem/1 var(--font-ui);
+  font: 600 0.7rem/1 var(--font-ui);
   letter-spacing: 0.1em;
   text-transform: uppercase;
 }

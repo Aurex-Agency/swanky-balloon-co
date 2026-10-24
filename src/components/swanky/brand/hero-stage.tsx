@@ -4,7 +4,9 @@
 // as sticker letters on top. Letters hop on hover; hero stickers float and can be thrown.
 import { useRef } from "react";
 import { ambient } from "@/lib/swanky/ambient";
-import { Draggable, gsap, useGSAP } from "@/lib/swanky/gsap";
+import type { Draggable } from "gsap/Draggable";
+import { gsap, loadDraggable, useGSAP } from "@/lib/swanky/gsap";
+import { introPlaying, introSettled } from "@/lib/swanky/intro-boot";
 import { useReducedMotion } from "../motion/motion-provider";
 
 type Props = {
@@ -27,6 +29,8 @@ export function HeroStage({ word, garland, stickers, className, id }: Props) {
       const back = root.querySelectorAll<HTMLElement>(".wordmark-back .ch");
       const front = root.querySelectorAll<HTMLElement>(".wordmark-front .ch");
       const hop = (i: number) =>
+        !introPlaying(front[i]) &&
+        !introPlaying(back[i]) &&
         gsap
           .timeline()
           .to([front[i], back[i]], {
@@ -59,19 +63,26 @@ export function HeroStage({ word, garland, stickers, className, id }: Props) {
           }),
         ),
       );
-      const drags = Draggable.create(root.querySelectorAll("[data-drag]"), {
-        type: "x,y",
-        bounds: root.closest("section") ?? undefined,
-        inertia: true,
-        edgeResistance: 0.8,
-        onPress() {
-          gsap.to(this.target, { scale: 1.12, duration: 0.2 });
-        },
-        onRelease() {
-          gsap.to(this.target, { scale: 1, duration: 0.8, ease: "float" });
-        },
+      let drags: Draggable[] = [];
+      let live = true;
+      // Stickers become throwable once the plugin has loaded and their intro has played.
+      Promise.all([loadDraggable(), introSettled(root)]).then(([D]) => {
+        if (!live) return;
+        drags = D.create(root.querySelectorAll("[data-drag]"), {
+          type: "x,y",
+          bounds: root.closest("section") ?? undefined,
+          inertia: true,
+          edgeResistance: 0.8,
+          onPress() {
+            gsap.to(this.target, { scale: 1.12, duration: 0.2 });
+          },
+          onRelease() {
+            gsap.to(this.target, { scale: 1, duration: 0.8, ease: "float" });
+          },
+        });
       });
       return () => {
+        live = false;
         offs.forEach((off) => off());
         drags.forEach((d) => d.kill());
       };
