@@ -179,6 +179,10 @@
 .service-card:hover .sticker {
   transform: translateY(-8px) rotate(-6deg);
 }
+/* Olive labels fall under 4.5:1 on the blue, gold and sand cards; charcoal clears 7:1. */
+.service-card .label {
+  color: var(--charcoal);
+}
 .service-card-copy {
   display: grid;
   gap: 10px;
@@ -1320,5 +1324,90 @@ legend {
   .faq-plus,
   .plus {
     transition: none;
+  }
+}
+
+/* ---------- Phones ---------- */
+@media (max-width: 900px) {
+  /* The palette garland stays pinned under the nav while the colors below it are
+     chosen, so every change is visible. */
+  .studio {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .studio-preview {
+    display: contents;
+  }
+  .studio-garland {
+    order: -1;
+    position: sticky;
+    top: 104px;
+    z-index: 3;
+    box-shadow: 0 10px 0 var(--ivory);
+  }
+}
+@media (max-width: 600px) {
+  :root {
+    --fs-label: 0.75rem;
+  }
+  /* Keep the seal sticker off the wordmark. */
+  .hs-seal {
+    width: 60px;
+    right: 1%;
+    bottom: -7%;
+  }
+  /* Collection cards: the sticker sits beside the copy instead of above it. */
+  .service-card {
+    min-height: 0;
+    grid-template-columns: minmax(0, 1fr) 72px;
+    grid-template-rows: auto auto;
+    gap: 10px 14px;
+    padding: 18px;
+  }
+  .service-card .sticker {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+    width: 100%;
+    align-self: center;
+  }
+  .service-card .label,
+  .service-card-copy {
+    grid-column: 1;
+  }
+  .service-card-title {
+    font-size: 1.7rem;
+  }
+  .page-hero-sticker {
+    max-width: 200px;
+  }
+  /* Inquiry: a compact summary so the form starts on the first screen. */
+  .planner-board {
+    grid-template-columns: 56px minmax(0, 1fr);
+    column-gap: 14px;
+    align-items: center;
+    padding: 14px 16px;
+  }
+  .planner-board .label {
+    grid-column: 1 / -1;
+  }
+  .planner-board .balloon-trio {
+    grid-row: span 2;
+    width: 56px;
+  }
+  .planner-board :is(strong, p) {
+    grid-column: 2;
+    margin: 0;
+  }
+  .planner-help {
+    display: none;
+  }
+}
+/* Comfortable touch targets for text links. */
+@media (pointer: coarse) {
+  .label > a {
+    display: inline-block;
+    padding-block: 15px;
+    margin-block: -15px;
   }
 }

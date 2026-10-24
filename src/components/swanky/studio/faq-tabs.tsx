@@ -1,8 +1,9 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { faqs, faqTopics } from "@/data/swanky";
-import { Flip, useGSAP } from "@/lib/swanky/gsap";
+import type { Flip } from "gsap/Flip";
+import { loadFlip, useGSAP } from "@/lib/swanky/gsap";
 import { useReducedMotion } from "../motion/motion-provider";
 
 const TABS = ["All", ...faqTopics];
@@ -11,6 +12,11 @@ const TABS = ["All", ...faqTopics];
 export function FaqTabs() {
   const ref = useRef<HTMLDivElement>(null);
   const state = useRef<Flip.FlipState | null>(null);
+  // Loaded after the page is up; until then tabs switch without the marker animation.
+  const flip = useRef<typeof Flip | null>(null);
+  useEffect(() => {
+    loadFlip().then((f) => (flip.current = f));
+  }, []);
   const reduced = useReducedMotion();
   const [tab, setTab] = useState<string>("All");
   const shown = faqs.filter((f) => tab === "All" || f.topic === tab);
@@ -18,7 +24,7 @@ export function FaqTabs() {
   useGSAP(
     () => {
       if (state.current && !reduced)
-        Flip.from(state.current, { duration: 0.5, ease: "glide" });
+        flip.current?.from(state.current, { duration: 0.5, ease: "glide" });
       state.current = null;
     },
     { scope: ref, dependencies: [tab] },
@@ -34,8 +40,8 @@ export function FaqTabs() {
             className="pill filter-pill"
             aria-pressed={tab === t}
             onClick={() => {
-              if (ref.current)
-                state.current = Flip.getState(
+              if (ref.current && flip.current)
+                state.current = flip.current.getState(
                   ref.current.querySelectorAll(".filter-active"),
                 );
               setTab(t);

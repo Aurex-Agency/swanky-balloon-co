@@ -8,6 +8,7 @@ import { AttributionCapture } from "@/components/attribution";
 import { Sticker } from "@/components/swanky/brand/sticker";
 import { SiteFooter } from "@/components/swanky/chrome/site-footer";
 import { SiteNav } from "@/components/swanky/chrome/site-nav";
+import { INTRO_BOOT } from "@/lib/swanky/intro-boot";
 import { Ticker } from "@/components/swanky/chrome/ticker";
 import { MotionProvider } from "@/components/swanky/motion/motion-provider";
 import { TransitionProvider } from "@/components/swanky/motion/transition-provider";
@@ -88,6 +89,8 @@ export default function SwankyLayout({
           </TransitionProvider>
         </MotionProvider>
         {demo && <span className="demo-badge">Concept preview</span>}
+        {/* Plays the first-load intro before hydration (see intro-boot.ts). */}
+        <script dangerouslySetInnerHTML={{ __html: INTRO_BOOT }} />
       </body>
     </html>
   );
