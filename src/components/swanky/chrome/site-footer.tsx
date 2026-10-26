@@ -48,6 +48,7 @@ export function SiteFooter() {
       <div className="footer-bottom">
         <span>© {new Date().getFullYear()} Swanky Balloon Co.</span>
         <TransitionLink href="/privacy">Privacy</TransitionLink>
+        <TransitionLink href="/terms">Terms</TransitionLink>
         <MotionToggle />
         {process.env.NEXT_PUBLIC_DEMO_MODE === "true" && (
           <span>Website by Aurex Business Labs</span>

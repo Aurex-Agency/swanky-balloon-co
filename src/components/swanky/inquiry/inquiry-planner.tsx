@@ -12,6 +12,7 @@ import {
   copy,
   eventTypes,
   budgetRanges,
+  legal,
   services,
   vibes,
   swatches,
@@ -33,6 +34,15 @@ const subtitles = [
   "A few details, then we’ll be in touch.",
 ];
 const storageKey = "swanky-inquiry-v2";
+// Opens in a new tab so reading the policy never interrupts the inquiry.
+function LegalLink({ href, children }: { href: string; children: string }) {
+  return (
+    <a href={href} target="_blank" rel="noopener">
+      {children}
+      <span className="sr-only"> (opens in a new tab)</span>
+    </a>
+  );
+}
 export function InquiryPlanner() {
   const [draft, setDraft] = useState<Draft>(emptyDraft);
   const [ready, setReady] = useState(false);
@@ -467,6 +477,29 @@ export function InquiryPlanner() {
                     true,
                   )}
                 </div>
+                <label className="consent sms-consent">
+                  <input
+                    type="checkbox"
+                    id="smsConsent"
+                    checked={draft.smsConsent}
+                    onChange={(e) => update("smsConsent", e.target.checked)}
+                    aria-invalid={!!errors.smsConsent}
+                    aria-describedby="sms-consent-note"
+                  />
+                  <span>
+                    <strong>Text me about my inquiry (optional).</strong>{" "}
+                    {legal.smsDisclosure} See our{" "}
+                    <LegalLink href="/privacy">Privacy Policy</LegalLink> and{" "}
+                    <LegalLink href="/terms">Terms</LegalLink>.
+                  </span>
+                </label>
+                <p id="sms-consent-note" className="form-note">
+                  Leave this unchecked and we’ll reach you by email or phone
+                  call instead.
+                </p>
+                {errors.smsConsent && (
+                  <p className="field-error">{errors.smsConsent}</p>
+                )}
                 <div className="inquiry-summary">
                   <span className="label">Your celebration at a glance</span>
                   <dl>
@@ -547,8 +580,10 @@ export function InquiryPlanner() {
                   />
                   <span>
                     I agree that Swanky Balloon Co. may contact me about this
-                    inquiry using my preferred contact method. This is not
-                    consent to ongoing marketing.
+                    inquiry by email or phone call, and I have read the{" "}
+                    <LegalLink href="/privacy">Privacy Policy</LegalLink> and{" "}
+                    <LegalLink href="/terms">Terms</LegalLink>. This is not
+                    consent to marketing.
                   </span>
                 </label>
                 {errors.consent && (

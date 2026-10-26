@@ -16,10 +16,19 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/about",
     "/faq",
     "/inquire",
+    "/privacy",
+    "/terms",
   ];
   return pages.map((path) => ({
     url: `${origin}${path}`,
     changeFrequency: "monthly",
-    priority: path === "/" ? 1 : path === "/inquire" ? 0.9 : 0.7,
+    priority:
+      path === "/"
+        ? 1
+        : path === "/inquire"
+          ? 0.9
+          : path === "/privacy" || path === "/terms"
+            ? 0.3
+            : 0.7,
   }));
 }

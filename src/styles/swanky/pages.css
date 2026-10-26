@@ -1238,6 +1238,47 @@ legend {
 .prose p {
   color: var(--charcoal);
 }
+.prose h3 {
+  font-family: var(--font-ui);
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--charcoal);
+  margin-top: 4px;
+}
+.prose ul {
+  margin: 0;
+  padding-left: 1.2em;
+  list-style: disc;
+  display: grid;
+  gap: 8px;
+}
+.prose a {
+  color: var(--olive);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.prose li::marker {
+  color: var(--olive);
+}
+.legal-updated {
+  font-size: var(--fs-small);
+  color: var(--muted);
+}
+.legal-contact {
+  display: grid;
+  gap: 4px;
+  justify-items: start;
+  font-style: normal;
+  padding: 18px 20px;
+  border: var(--hair);
+  border-radius: var(--r-card);
+}
+/* Links inside a consent label stay readable and tappable. */
+.consent a {
+  color: var(--olive);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
 
 /* ---------- Responsive ---------- */
 @media (max-width: 1080px) {

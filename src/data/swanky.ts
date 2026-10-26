@@ -16,12 +16,19 @@ export interface Testimonial {
 }
 export const brand = {
   name: "Swanky Balloon Co.",
+  legalName: "Swanky Balloon Co. LLC",
+  /** Business address shown in the privacy policy and terms. */
+  address: "1723 Ravello Way, Brentwood, TN 37027",
   area: "Nashville, Brentwood + Middle Tennessee",
   instagram: "https://www.instagram.com/swankyballoonco/",
   website: "https://swankyballoon.com",
   description:
     "Custom balloon installations, garlands, helium arrangements and event styling in Nashville, Brentwood and Middle Tennessee.",
-  contact: { email: null, phone: null },
+  contact: {
+    email: "swankyballoonco@gmail.com",
+    phone: "(615) 686-5113",
+    phoneHref: "tel:+16156865113",
+  },
   founderImage: null as string | null,
 };
 export const navigation = [
@@ -474,3 +481,14 @@ export const mockLeads: MockLead[] = [
     stage: "Completed",
   },
 ];
+
+// Privacy policy, terms and the text message program registered for A2P 10DLC. The
+// disclosure is shown beside the optional SMS checkbox on the inquiry form and saved
+// with each opt-in, so a change here needs a new version date.
+export const legal = {
+  updated: "October 26, 2026",
+  smsProgram: "Swanky Balloon Co. Event Updates",
+  smsDisclosureVersion: "2026-10-26",
+  smsDisclosure:
+    "I agree to receive text messages from Swanky Balloon Co. LLC at the mobile number above about my inquiry and booking, including replies, quotes, booking confirmations, reminders and event-day updates. Message frequency varies. Message and data rates may apply. Reply HELP for help or STOP to opt out at any time. Consent is not a condition of purchase.",
+};
