@@ -13,6 +13,7 @@ export function inquiryTags(inquiry: Inquiry) {
     `budget-${slug(inquiry.qualification.budgetRange)}`,
     `event-month-${inquiry.event.date.slice(0, 7)}`,
     `source-${slug(inquiry.attribution.utmSource || inquiry.qualification.leadSource || "direct")}`,
+    ...(inquiry.consent.sms.optedIn ? ["sms-opt-in"] : []),
   ];
 }
 export async function deliverInquiry(
@@ -36,7 +37,8 @@ export async function deliverInquiry(
     throw new Error("Webhook must use HTTPS");
   // GHL mapping: contact -> contact; event/creative/qualification -> custom fields;
   // inspiration + notes -> contact notes; tags -> contact tags; create an opportunity
-  // in New Inquiry, then Needs Date Check. Consent is for inquiry response only.
+  // in New Inquiry, then Needs Date Check. Consent is for inquiry response only; texts
+  // go only to contacts tagged sms-opt-in, whose consent.sms holds the disclosure shown.
   const response = await fetch(url, {
     method: "POST",
     headers: { "Content-Type": "application/json" },

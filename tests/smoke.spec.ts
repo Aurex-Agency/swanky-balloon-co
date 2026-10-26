@@ -14,6 +14,7 @@ const ROUTES = [
   "/inquire",
   "/thank-you",
   "/privacy",
+  "/terms",
 ];
 
 // Client motion marks the page intro (or garland) ready once hydrated; interact after that.
@@ -175,6 +176,17 @@ test("guided inquiry validates, saves, reviews and submits", async ({
   await page.getByLabel("Mobile phone", { exact: true }).fill("6155550100");
   await expect(page.locator(".inquiry-summary")).toContainText("Birthday");
   await page.getByRole("checkbox", { name: /I agree that Swanky/ }).check();
+  // Texting needs its own optional, unchecked consent (A2P 10DLC).
+  const sms = page.getByRole("checkbox", { name: /Text me about my inquiry/ });
+  await expect(sms).not.toBeChecked();
+  await page
+    .getByLabel("Best way to reach you", { exact: true })
+    .selectOption("Text message");
+  await page.getByRole("button", { name: "Send My Inquiry" }).click();
+  await expect(page.locator(".error-summary")).toContainText(
+    "check the text message box",
+  );
+  await sms.check();
   await page.screenshot({
     path: `test-results/inquiry-${testInfo.project.name}.png`,
     fullPage: true,
@@ -185,6 +197,7 @@ test("guided inquiry validates, saves, reviews and submits", async ({
   await page.getByRole("button", { name: "Send My Inquiry" }).click();
   const request = await requestPromise;
   expect(request.postDataJSON().attribution.utmSource).toBe("instagram");
+  expect(request.postDataJSON().smsConsent).toBe(true);
   await expect(page).toHaveURL(/\/thank-you\?demo=true/);
   await expect(page.getByRole("status")).toContainText("not sent to Swanky");
   await expect(page.locator(".confirmation-board")).toContainText(
