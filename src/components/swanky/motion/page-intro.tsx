@@ -4,6 +4,7 @@
 // blocks rise in sequence and [data-hero-sticker] stickers spin in from small.
 import { useRef } from "react";
 import { gsap, useGSAP } from "@/lib/swanky/gsap";
+import { introBooted } from "@/lib/swanky/intro-boot";
 import { useReducedMotion } from "./motion-provider";
 import { usePageEnter } from "./transition-provider";
 
@@ -25,7 +26,8 @@ export function PageIntro({
       const chars = root.querySelectorAll(".wordmark .ch");
       const blocks = root.querySelectorAll("[data-load]");
       const stickers = root.querySelectorAll("[data-hero-sticker]");
-      if (reduced) {
+      // Reduced motion, or the inline boot already played this first-load intro.
+      if (reduced || introBooted(root)) {
         root.classList.add("intro-ready");
         return;
       }

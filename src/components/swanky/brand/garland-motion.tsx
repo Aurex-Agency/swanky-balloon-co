@@ -5,6 +5,11 @@ import { confetti, popWord } from "@/lib/swanky/confetti";
 import { gsap, useGSAP } from "@/lib/swanky/gsap";
 import { ambient } from "@/lib/swanky/ambient";
 import {
+  introBooted,
+  introPlaying,
+  introSettled,
+} from "@/lib/swanky/intro-boot";
+import {
   PALETTES,
   pickWeighted,
   shineFor,
@@ -59,6 +64,7 @@ export function GarlandMotion({ svg, interactive, className, id }: Props) {
             duration: 0.35,
             delay: i * 0.004,
           });
+          if (introPlaying(inner[i])) return;
           gsap.fromTo(
             inner[i],
             { scale: 0.86 },
@@ -77,11 +83,54 @@ export function GarlandMotion({ svg, interactive, className, id }: Props) {
         return () => cleanups.forEach((c) => c());
       }
 
-      gsap.set([...inner, ...sparkles], { transformOrigin: "50% 50%" });
-      gsap.set(inner, { scale: 0 });
-      gsap.set(sparkles, { scale: 0 });
+      // On first load the inline boot may already be inflating this garland; then only
+      // the idle float starts here, once that has finished.
+      const booted = introBooted(root);
+      if (!booted) {
+        gsap.set([...inner, ...sparkles], { transformOrigin: "50% 50%" });
+        gsap.set(inner, { scale: 0 });
+        gsap.set(sparkles, { scale: 0 });
+      }
       root.classList.add("intro-ready");
+      // The idle float: balloons bob and sparkles pulse, starting `wait` seconds from now.
+      const float = contextSafe!((wait: number) => {
+        inner.forEach((b) =>
+          ambient(
+            gsap.to(b, {
+              y: gsap.utils.random(-7, -3),
+              duration: gsap.utils.random(2, 3.6),
+              ease: "sine.inOut",
+              yoyo: true,
+              repeat: -1,
+              delay: wait + Math.random() * 2,
+            }),
+          ),
+        );
+        sparkles.forEach((s, i) =>
+          ambient(
+            gsap.to(s, {
+              scale: 0.7,
+              rotate: 20,
+              duration: 1.4 + i * 0.2,
+              ease: "sine.inOut",
+              yoyo: true,
+              repeat: -1,
+              delay: wait + 0.8,
+            }),
+          ),
+        );
+      });
+      let live = true;
+      cleanups.push(() => (live = false));
       inflateRef.current = contextSafe!(() => {
+        if (booted) {
+          introSettled(root).then(() => {
+            if (!live) return;
+            gsap.set([...inner, ...sparkles], { transformOrigin: "50% 50%" });
+            float(0);
+          });
+          return;
+        }
         gsap
           .timeline({ delay: 0.15 })
           .to(inner, {
@@ -101,31 +150,7 @@ export function GarlandMotion({ svg, interactive, className, id }: Props) {
             },
             1.05,
           );
-        inner.forEach((b) =>
-          ambient(
-            gsap.to(b, {
-              y: gsap.utils.random(-7, -3),
-              duration: gsap.utils.random(2, 3.6),
-              ease: "sine.inOut",
-              yoyo: true,
-              repeat: -1,
-              delay: 1.6 + Math.random() * 2,
-            }),
-          ),
-        );
-        sparkles.forEach((s, i) =>
-          ambient(
-            gsap.to(s, {
-              scale: 0.7,
-              rotate: 20,
-              duration: 1.4 + i * 0.2,
-              ease: "sine.inOut",
-              yoyo: true,
-              repeat: -1,
-              delay: 2.4,
-            }),
-          ),
-        );
+        float(1.6);
       });
 
       if (!interactive) return () => cleanups.forEach((c) => c());
@@ -143,10 +168,10 @@ export function GarlandMotion({ svg, interactive, className, id }: Props) {
       balls.forEach((b, i) => {
         const bi = inner[i];
         const enter = () => {
-          if (!b.dataset.popped) squish(bi);
+          if (!b.dataset.popped && !introPlaying(bi)) squish(bi);
         };
         const click = (e: MouseEvent) => {
-          if (b.dataset.popped) return;
+          if (b.dataset.popped || introPlaying(bi)) return;
           b.dataset.popped = "1";
           confetti(
             e.clientX,

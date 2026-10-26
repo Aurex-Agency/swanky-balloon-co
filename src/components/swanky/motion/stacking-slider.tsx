@@ -3,7 +3,8 @@
 // Slush's stacking slider: drag or throw with inertia; cards you pass shrink to 60% and
 // tilt −10° into a pile. Previous/next buttons and arrow keys move one card at a time.
 import { useRef, useState } from "react";
-import { Draggable, gsap, useGSAP } from "@/lib/swanky/gsap";
+import type { Draggable } from "gsap/Draggable";
+import { gsap, loadDraggable, useGSAP } from "@/lib/swanky/gsap";
 import { useReducedMotion } from "./motion-provider";
 
 type Props = { label: string; children: React.ReactNode[] };
@@ -53,24 +54,30 @@ export function StackingSlider({ label, children }: Props) {
       };
       measure();
       const clamp = (v: number) => gsap.utils.clamp(0, max, v);
-      const drag = Draggable.create(slider, {
-        type: "x",
-        bounds: { minX: -max, maxX: 0 },
-        inertia: !reduced,
-        snap: (v: number) => -Math.round(clamp(-v) / step) * step,
-        onDrag() {
-          m = clamp(-this.x);
-          layout();
-        },
-        onThrowUpdate() {
-          m = clamp(-this.x);
-          layout();
-        },
-        onThrowComplete() {
-          m = clamp(-this.x);
-          layout();
-        },
-      })[0];
+      // Dragging arrives with the plugin; buttons and keys work before it loads.
+      let drag: Draggable | undefined;
+      let live = true;
+      loadDraggable().then((D) => {
+        if (!live) return;
+        drag = D.create(slider, {
+          type: "x",
+          bounds: { minX: -max, maxX: 0 },
+          inertia: !reduced,
+          snap: (v: number) => -Math.round(clamp(-v) / step) * step,
+          onDrag() {
+            m = clamp(-this.x);
+            layout();
+          },
+          onThrowUpdate() {
+            m = clamp(-this.x);
+            layout();
+          },
+          onThrowComplete() {
+            m = clamp(-this.x);
+            layout();
+          },
+        })[0];
+      });
       api.current.go = (i: number) => {
         const target = clamp(i * step);
         const state = { m };
@@ -82,18 +89,22 @@ export function StackingSlider({ label, children }: Props) {
             m = state.m;
             layout();
           },
-          onComplete: () => drag.update(),
+          onComplete: () => drag?.update(),
         });
       };
       layout(false);
       const onResize = () => {
         measure();
         m = clamp(m);
-        drag.applyBounds({ minX: -max, maxX: 0 });
+        drag?.applyBounds({ minX: -max, maxX: 0 });
         layout();
       };
       window.addEventListener("resize", onResize);
-      return () => window.removeEventListener("resize", onResize);
+      return () => {
+        live = false;
+        drag?.kill();
+        window.removeEventListener("resize", onResize);
+      };
     },
     { scope: ref, dependencies: [reduced] },
   );
