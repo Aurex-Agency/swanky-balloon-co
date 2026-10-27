@@ -22,11 +22,11 @@ export default function Terms() {
         </h1>
         <p className="legal-updated">Last updated {legal.updated}</p>
         <p>
-          These Terms of Service apply to swankyballoon.com and to text messages
-          from {brand.legalName} (“Swanky,” “we,” “us”). By using the site,
-          sending an inquiry or opting in to texts, you agree to these terms and
-          to our <TransitionLink href="/privacy">Privacy Policy</TransitionLink>
-          .
+          These Terms of Service apply to swankyballoon.com,
+          swanky-balloon-co.vercel.app and to text messages from{" "}
+          {brand.legalName} (“Swanky,” “we,” “us”). By using the site, sending
+          an inquiry or opting in to texts, you agree to these terms and to our{" "}
+          <TransitionLink href="/privacy">Privacy Policy</TransitionLink>.
         </p>
 
         <h2 id="text-messages">Text message terms</h2>
@@ -36,20 +36,23 @@ export default function Terms() {
         <p>
           <strong>What we send:</strong> texts about your inquiry and booking,
           including replies to your questions, quotes, booking confirmations,
-          reminders and event-day updates such as delivery and pickup times. We
-          do not send promotional texts.
+          reminders and event-day updates such as delivery and pickup times.
+          With separate marketing SMS consent, we also send recurring special
+          offers, seasonal balloon decor announcements and service promotions.
         </p>
         <p>
-          <strong>How you opt in:</strong> by checking the optional text message
-          box on our{" "}
+          <strong>How you opt in:</strong> by selecting the informational SMS
+          checkbox, the marketing SMS checkbox, or both on our{" "}
           <TransitionLink href="/inquire">inquiry form</TransitionLink> and
-          providing your mobile number. The box is never checked for you, and
-          you can send an inquiry without it.
+          providing your mobile number. Both checkboxes are optional and
+          unchecked by default. You can submit an inquiry with neither selected.
+          Informational SMS consent does not grant marketing SMS consent, and
+          marketing SMS consent does not grant informational SMS consent.
         </p>
         <ul>
           <li>
-            <strong>Message frequency varies</strong> with your inquiry and
-            event.
+            <strong>Message frequency varies</strong> for both informational and
+            marketing texts.
           </li>
           <li>
             <strong>Message and data rates may apply.</strong> Check your mobile

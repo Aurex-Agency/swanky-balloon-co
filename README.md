@@ -80,3 +80,20 @@ Use a Node.js host with Next.js support and Node 20.9 or newer (developed with N
 The repository is prepared for deployment; publication is separate. The CRM route is unlinked and noindex, but is not an authenticated application. Never add live customer data to it. Confirm the final privacy notice and business content before a public launch.
 
 See `SWANKY-SYSTEMS-PLAN.md` for webhook mapping, proposed automation rules and launch decisions. See `SHOWCASE-NOTES.md` for the one-minute presentation.
+
+### SMS consent mapping
+
+The inquiry form collects two independent, optional SMS choices. `consent.sms`
+(and the existing `sms-opt-in` tag) covers inquiry and booking updates only.
+`consent.marketingSms` (and `sms-marketing-opt-in`) covers promotional SMS only.
+Each opted-in record includes its disclosure and version; `submittedAt` records
+the submission time. `consent.marketing` mirrors marketing SMS permission only,
+not email permission. Older submissions without the new field default to false.
+
+Before enabling promotional sends in GHL, map and retain both consent records
+and the timestamp. Gate each workflow on its corresponding consent and current
+SMS DND/unsubscribe status; do not use the informational tag to enroll contacts
+in marketing. Tags are routing hints, not an authoritative consent ledger.
+Do not treat an unchecked box on a later inquiry as a new opt-in or clear STOP/DND
+without an explicit, recorded resubscription. Send opt-in confirmations matching
+the categories selected, and verify HELP/STOP handling in GHL.

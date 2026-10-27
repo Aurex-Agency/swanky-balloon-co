@@ -26,7 +26,7 @@ Keep stage changes tied to actual actions. Booked requires the owner's confirmed
 | Trigger | Action | Guardrail |
 | --- | --- | --- |
 | Inquiry received | Immediate branded confirmation email | Acknowledge receipt, summarize event details, explain approximate 24–48-hour response window. |
-| Inquiry received | Immediate confirmation text | Enable only after appropriate SMS consent wording and messaging requirements are approved. Current checkbox grants inquiry response consent, not marketing consent. |
+| Inquiry received | Immediate confirmation text | Enable only after appropriate SMS consent wording and messaging requirements are approved. The inquiry SMS checkbox grants informational consent; the separate marketing SMS checkbox grants promotional consent. Map both records and honor SMS DND. |
 | Inquiry received | Notify owner and create a follow-up task | Include event date, city, services, palette and budget. Target the next business day. |
 | No owner response | Internal overdue task alert | Avoid promising that automatic messages replace a human response. |
 | No prospect response | Short follow-up sequence | Suggested 2 and 5 business days after the last response; stop on reply, opt-out, booking or disqualification. |
