@@ -24,8 +24,8 @@ export default function Privacy() {
         <p>
           This Privacy Policy explains how {brand.legalName} (“Swanky,” “we,”
           “us”) collects, uses, shares and protects information when you visit
-          swankyballoon.com, send us an inquiry, or talk with us by email, phone
-          or text message.
+          swankyballoon.com or swanky-balloon-co.vercel.app, send us an inquiry,
+          or talk with us by email, phone or text message.
         </p>
 
         <h2>Information we collect</h2>
@@ -79,6 +79,10 @@ export default function Privacy() {
           </li>
           <li>To provide customer service and answer your questions.</li>
           <li>
+            To send offers and announcements by text when you separately opt in
+            to marketing SMS.
+          </li>
+          <li>
             To understand which channels bring inquiries and to improve our
             website and services.
           </li>
@@ -87,20 +91,30 @@ export default function Privacy() {
           </li>
         </ul>
         <p>
-          Sending an inquiry does not sign you up for marketing. We contact you
-          about your inquiry and booking only.
+          Sending an inquiry does not automatically sign you up for marketing.
+          We send marketing texts only when you separately select the marketing
+          SMS checkbox. This does not subscribe you to marketing emails.
         </p>
 
         <h2 id="text-messages">Text messages (SMS)</h2>
         <p>
-          We text you only if you opt in by checking the optional, unchecked
-          text message box on our inquiry form. Texts from {legal.smsProgram}{" "}
-          are about your inquiry and booking: replies to your questions, quotes,
-          booking confirmations, reminders and event-day updates. We do not send
-          promotional texts.
+          Texts from {legal.smsProgram} are based on two separate, optional
+          checkboxes on our inquiry form, both unchecked by default. The inquiry
+          SMS checkbox covers replies, quotes, booking confirmations, reminders
+          and event-day updates. The marketing SMS checkbox covers recurring
+          special offers, seasonal balloon decor announcements and service
+          promotions. You can select either, both or neither and still submit an
+          inquiry. We send only the message types you consent to receive.
+        </p>
+        <p>
+          We record each SMS consent choice, the disclosure and version for each
+          opt-in, and the submission timestamp with your inquiry so we can honor
+          and document your choices.
         </p>
         <ul>
-          <li>Message frequency varies with your inquiry and event.</li>
+          <li>
+            Message frequency varies for both informational and marketing texts.
+          </li>
           <li>Message and data rates may apply.</li>
           <li>
             Reply <strong>STOP</strong> at any time to stop receiving texts. You

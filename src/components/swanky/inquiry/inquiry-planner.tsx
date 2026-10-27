@@ -493,9 +493,26 @@ export function InquiryPlanner() {
                     <LegalLink href="/terms">Terms</LegalLink>.
                   </span>
                 </label>
+                <label className="consent marketing-sms-consent">
+                  <input
+                    type="checkbox"
+                    id="marketingSmsConsent"
+                    checked={draft.marketingSmsConsent ?? false}
+                    onChange={(e) =>
+                      update("marketingSmsConsent", e.target.checked)
+                    }
+                  />
+                  <span>
+                    <strong>Send me offers and inspiration (optional).</strong>{" "}
+                    {legal.marketingSmsDisclosure} See our{" "}
+                    <LegalLink href="/privacy">Privacy Policy</LegalLink> and{" "}
+                    <LegalLink href="/terms">Terms</LegalLink>.
+                  </span>
+                </label>
                 <p id="sms-consent-note" className="form-note">
-                  Leave this unchecked and we’ll reach you by email or phone
-                  call instead.
+                  Leave the inquiry text box unchecked and we’ll reach you about
+                  your inquiry by email or phone call instead. Both text message
+                  choices are optional.
                 </p>
                 {errors.smsConsent && (
                   <p className="field-error">{errors.smsConsent}</p>

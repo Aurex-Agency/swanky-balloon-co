@@ -111,6 +111,7 @@ export const inquirySchema = z
     }),
     // Optional and unchecked by default: texting needs its own consent (A2P 10DLC).
     smsConsent: z.boolean(),
+    marketingSmsConsent: z.boolean().default(false),
     attribution: z.object({
       utmSource: short,
       utmMedium: short,
@@ -160,6 +161,7 @@ export const emptyDraft: Draft = {
   leadSource: "",
   consent: false,
   smsConsent: false,
+  marketingSmsConsent: false,
   attribution: blankAttribution,
 };
 export const stepFields: (keyof Draft)[][] = [
@@ -182,6 +184,7 @@ export const stepFields: (keyof Draft)[][] = [
     "preferredContact",
     "leadSource",
     "smsConsent",
+    "marketingSmsConsent",
     "consent",
   ],
 ];
@@ -216,7 +219,11 @@ export interface Inquiry {
   attribution: Draft["attribution"];
   consent: {
     inquiryResponse: true;
-    marketing: false;
+    /** Marketing permission applies only to SMS, never email or other channels. */
+    marketing: boolean;
+    marketingSms:
+      | { optedIn: true; disclosure: string; version: string }
+      | { optedIn: false };
     /** The exact disclosure shown when the visitor opted in to texts, as proof of consent. */
     sms:
       | { optedIn: true; disclosure: string; version: string }
@@ -260,7 +267,14 @@ export function normalizeInquiry(
     attribution: data.attribution,
     consent: {
       inquiryResponse: true,
-      marketing: false,
+      marketing: data.marketingSmsConsent,
+      marketingSms: data.marketingSmsConsent
+        ? {
+            optedIn: true,
+            disclosure: legal.marketingSmsDisclosure,
+            version: legal.marketingSmsDisclosureVersion,
+          }
+        : { optedIn: false },
       sms: data.smsConsent
         ? {
             optedIn: true,

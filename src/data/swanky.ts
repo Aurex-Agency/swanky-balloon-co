@@ -486,8 +486,11 @@ export const mockLeads: MockLead[] = [
 // disclosure is shown beside the optional SMS checkbox on the inquiry form and saved
 // with each opt-in, so a change here needs a new version date.
 export const legal = {
-  updated: "October 26, 2026",
-  smsProgram: "Swanky Balloon Co. Event Updates",
+  updated: "October 27, 2026",
+  smsProgram: "Swanky Balloon Co. Updates & Offers",
+  marketingSmsDisclosureVersion: "2026-10-27",
+  marketingSmsDisclosure:
+    "I agree to receive recurring marketing and promotional text messages from Swanky Balloon Co. LLC at the mobile number above, including special offers, seasonal balloon decor announcements and service promotions. Message frequency varies. Message and data rates may apply. Reply HELP for help or STOP to opt out at any time. Consent is not a condition of purchase.",
   smsDisclosureVersion: "2026-10-26",
   smsDisclosure:
     "I agree to receive text messages from Swanky Balloon Co. LLC at the mobile number above about my inquiry and booking, including replies, quotes, booking confirmations, reminders and event-day updates. Message frequency varies. Message and data rates may apply. Reply HELP for help or STOP to opt out at any time. Consent is not a condition of purchase.",
