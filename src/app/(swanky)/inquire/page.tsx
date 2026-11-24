@@ -10,12 +10,17 @@ export const metadata: Metadata = {
   alternates: { canonical: "/inquire" },
 };
 
-export default function InquirePage() {
+export default async function InquirePage({
+  searchParams,
+}: {
+  searchParams: Promise<{ step?: string }>;
+}) {
+  const { step } = await searchParams;
   return (
     <section className="band band-blush inquire" aria-label="Inquiry">
       <div className="band-inner">
         <Suspense>
-          <InquiryPlanner />
+          <InquiryPlanner startAtDetails={step === "details"} />
         </Suspense>
         <section
           id="text-message-choices"
@@ -39,6 +44,12 @@ export default function InquirePage() {
             separate permissions. You can submit your inquiry without agreeing
             to either. These are the disclosures beside the checkboxes in step
             4; reading this information does not subscribe you.
+          </p>
+          <p>
+            You must be at least 18 years old to subscribe to text messages. You
+            can <a href="/inquire?step=details">open Your Details directly</a>{" "}
+            to choose your contact preferences. All required event details must
+            still be completed before submitting an inquiry.
           </p>
           <p>
             Read our <a href="/privacy">Privacy Policy</a> and{" "}

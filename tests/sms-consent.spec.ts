@@ -109,3 +109,22 @@ test("SMS disclosures are public before completing the inquiry steps", async ({
     overview.getByRole("link", { name: "Text Message Terms" }),
   ).toHaveAttribute("href", "/terms#text-messages");
 });
+
+test("direct details link renders real unchecked consent controls and preserves required validation", async ({
+  page,
+  request,
+}) => {
+  const response = await request.get("/inquire?step=details");
+  const html = await response.text();
+  expect(html).toContain('id="smsConsent"');
+  expect(html).toContain('id="marketingSmsConsent"');
+  await page.goto("/inquire?step=details");
+  await expect(page.locator("#smsConsent")).toBeVisible();
+  await expect(page.locator("#smsConsent")).not.toBeChecked();
+  await expect(page.locator("#marketingSmsConsent")).not.toBeChecked();
+  await page.getByRole("button", { name: "Send My Inquiry" }).click();
+  await expect(page.getByLabel("What are we celebrating?")).toBeVisible();
+  await expect(page.locator(".error-summary")).toContainText(
+    "Choose an event type",
+  );
+});

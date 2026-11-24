@@ -22,9 +22,10 @@ export default function Terms() {
         </h1>
         <p className="legal-updated">Last updated {legal.updated}</p>
         <p>
-          These Terms of Service apply to swanky-balloon-co.vercel.app and to text messages from{" "}
-          {brand.legalName} (“Swanky,” “we,” “us”). By using the site, sending
-          an inquiry or opting in to texts, you agree to these terms and to our{" "}
+          These Terms of Service apply to swanky-balloon-co.vercel.app and to
+          text messages from {brand.legalName} (“Swanky,” “we,” “us”). By using
+          the site, sending an inquiry or opting in to texts, you agree to these
+          terms and to our{" "}
           <TransitionLink href="/privacy">Privacy Policy</TransitionLink>.
         </p>
 
@@ -74,6 +75,9 @@ export default function Terms() {
             or call <a href={brand.contact.phoneHref}>{brand.contact.phone}</a>.
           </li>
           <li>Consent to receive texts is not a condition of purchase.</li>
+          <li>
+            You must be at least 18 years old to enroll in our SMS program.
+          </li>
           <li>Carriers are not liable for delayed or undelivered messages.</li>
           <li>
             You must be the account holder for the mobile number you provide, or

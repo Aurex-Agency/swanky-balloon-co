@@ -43,10 +43,14 @@ function LegalLink({ href, children }: { href: string; children: string }) {
     </a>
   );
 }
-export function InquiryPlanner() {
+export function InquiryPlanner({
+  startAtDetails = false,
+}: {
+  startAtDetails?: boolean;
+}) {
   const [draft, setDraft] = useState<Draft>(emptyDraft);
   const [ready, setReady] = useState(false);
-  const [step, setStep] = useState(0);
+  const [step, setStep] = useState(startAtDetails ? 3 : 0);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [sending, setSending] = useState(false);
   const [error, setError] = useState("");
@@ -57,7 +61,7 @@ export function InquiryPlanner() {
   const router = useRouter();
   useEffect(() => {
     let initial = { ...emptyDraft };
-    let initialStep = 0;
+    let initialStep = startAtDetails ? 3 : 0;
     try {
       const stored = JSON.parse(localStorage.getItem(storageKey) || "null");
       if (stored && Date.now() - stored.savedAt < 7 * 86400000) {
@@ -68,7 +72,9 @@ export function InquiryPlanner() {
           smsConsent: false,
           marketingSmsConsent: false,
         };
-        initialStep = Math.min(3, Math.max(0, stored.step || 0));
+        initialStep = startAtDetails
+          ? 3
+          : Math.min(3, Math.max(0, stored.step || 0));
       }
       const attribution = JSON.parse(
         sessionStorage.getItem("swanky-attribution") || "null",
@@ -97,7 +103,7 @@ export function InquiryPlanner() {
       setStep(initialStep);
       setReady(true);
     });
-  }, []);
+  }, [startAtDetails]);
   useEffect(() => {
     if (!ready) return;
     try {
@@ -524,10 +530,12 @@ export function InquiryPlanner() {
                   </span>
                 </label>
                 <p id="sms-consent-note" className="form-note">
-                  Leave the inquiry text box unchecked and we’ll reach you about
-                  your inquiry by email or phone call instead. Both text message
-                  choices are optional. If you reopen a saved draft, please
-                  select your text message choices again before submitting.
+                  By selecting either text message checkbox, you confirm you are
+                  at least 18 years old. Leave the inquiry text box unchecked
+                  and we’ll reach you about your inquiry by email or phone call
+                  instead. Both text message choices are optional. If you reopen
+                  a saved draft, please select your text message choices again
+                  before submitting.
                 </p>
                 {errors.smsConsent && (
                   <p className="field-error">{errors.smsConsent}</p>
