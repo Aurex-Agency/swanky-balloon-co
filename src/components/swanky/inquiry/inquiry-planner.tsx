@@ -61,7 +61,13 @@ export function InquiryPlanner() {
     try {
       const stored = JSON.parse(localStorage.getItem(storageKey) || "null");
       if (stored && Date.now() - stored.savedAt < 7 * 86400000) {
-        initial = { ...initial, ...stored.draft };
+        // A saved draft is not a fresh opt-in to the disclosure shown today.
+        initial = {
+          ...initial,
+          ...stored.draft,
+          smsConsent: false,
+          marketingSmsConsent: false,
+        };
         initialStep = Math.min(3, Math.max(0, stored.step || 0));
       }
       const attribution = JSON.parse(
@@ -270,6 +276,14 @@ export function InquiryPlanner() {
           Tell us what <em>you’re celebrating.</em>
         </h1>
         <p>{copy.planner.description}</p>
+        <p className="planner-help">
+          Text updates are optional. Choose inquiry texts, offers, both or
+          neither in step 4, Your Details.{" "}
+          <a href="#text-message-choices">
+            Read about your text message choices
+          </a>
+          .
+        </p>
         <div className="planner-board">
           <span className="label">Your celebration, taking shape</span>
           <BalloonTrio colors={draft.colors} />
@@ -512,7 +526,8 @@ export function InquiryPlanner() {
                 <p id="sms-consent-note" className="form-note">
                   Leave the inquiry text box unchecked and we’ll reach you about
                   your inquiry by email or phone call instead. Both text message
-                  choices are optional.
+                  choices are optional. If you reopen a saved draft, please
+                  select your text message choices again before submitting.
                 </p>
                 {errors.smsConsent && (
                   <p className="field-error">{errors.smsConsent}</p>

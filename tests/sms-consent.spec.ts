@@ -75,3 +75,37 @@ test("older forms never acquire marketing permission", () => {
   expect(inquiry.consent.marketingSms).toEqual({ optedIn: false });
   expect(inquiry.consent.marketing).toBe(false);
 });
+
+test("reopened drafts require fresh SMS choices without losing event details", async ({
+  page,
+}) => {
+  await page.addInitScript((draft) => {
+    localStorage.setItem(
+      "swanky-inquiry-v2",
+      JSON.stringify({
+        draft: { ...draft, smsConsent: true, marketingSmsConsent: true },
+        step: 3,
+        savedAt: Date.now(),
+      }),
+    );
+  }, validDraft);
+  await page.goto("/inquire");
+  await expect(page.locator("#firstName")).toHaveValue("Test");
+  await expect(page.locator("#smsConsent")).not.toBeChecked();
+  await expect(page.locator("#marketingSmsConsent")).not.toBeChecked();
+});
+
+test("SMS disclosures are public before completing the inquiry steps", async ({
+  page,
+}) => {
+  await page.goto("/inquire");
+  const overview = page.locator("#text-message-choices");
+  await expect(overview).toContainText(legal.smsDisclosure);
+  await expect(overview).toContainText(legal.marketingSmsDisclosure);
+  await expect(
+    overview.getByRole("link", { name: "Privacy Policy" }),
+  ).toHaveAttribute("href", "/privacy");
+  await expect(
+    overview.getByRole("link", { name: "Text Message Terms" }),
+  ).toHaveAttribute("href", "/terms#text-messages");
+});

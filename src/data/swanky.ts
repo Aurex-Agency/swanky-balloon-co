@@ -21,7 +21,7 @@ export const brand = {
   address: "1723 Ravello Way, Brentwood, TN 37027",
   area: "Nashville, Brentwood + Middle Tennessee",
   instagram: "https://www.instagram.com/swankyballoonco/",
-  website: "https://swankyballoon.com",
+  website: "https://swanky-balloon-co.vercel.app",
   description:
     "Custom balloon installations, garlands, helium arrangements and event styling in Nashville, Brentwood and Middle Tennessee.",
   contact: {
@@ -486,7 +486,7 @@ export const mockLeads: MockLead[] = [
 // disclosure is shown beside the optional SMS checkbox on the inquiry form and saved
 // with each opt-in, so a change here needs a new version date.
 export const legal = {
-  updated: "October 27, 2026",
+  updated: "November 24, 2026",
   smsProgram: "Swanky Balloon Co. Updates & Offers",
   marketingSmsDisclosureVersion: "2026-10-27",
   marketingSmsDisclosure:

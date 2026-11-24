@@ -22,8 +22,7 @@ export default function Terms() {
         </h1>
         <p className="legal-updated">Last updated {legal.updated}</p>
         <p>
-          These Terms of Service apply to swankyballoon.com,
-          swanky-balloon-co.vercel.app and to text messages from{" "}
+          These Terms of Service apply to swanky-balloon-co.vercel.app and to text messages from{" "}
           {brand.legalName} (“Swanky,” “we,” “us”). By using the site, sending
           an inquiry or opting in to texts, you agree to these terms and to our{" "}
           <TransitionLink href="/privacy">Privacy Policy</TransitionLink>.
@@ -44,10 +43,15 @@ export default function Terms() {
           <strong>How you opt in:</strong> by selecting the informational SMS
           checkbox, the marketing SMS checkbox, or both on our{" "}
           <TransitionLink href="/inquire">inquiry form</TransitionLink> and
-          providing your mobile number. Both checkboxes are optional and
-          unchecked by default. You can submit an inquiry with neither selected.
-          Informational SMS consent does not grant marketing SMS consent, and
-          marketing SMS consent does not grant informational SMS consent.
+          providing your mobile number in step 4, Your Details, then selecting
+          Send My Inquiry. See the{" "}
+          <a href="/inquire#text-message-choices">
+            text message choices and disclosures
+          </a>
+          . Both checkboxes are optional and unchecked by default. You can
+          submit an inquiry with neither selected. Informational SMS consent
+          does not grant marketing SMS consent, and marketing SMS consent does
+          not grant informational SMS consent.
         </p>
         <ul>
           <li>

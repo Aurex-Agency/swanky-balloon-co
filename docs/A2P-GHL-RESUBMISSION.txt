@@ -1,0 +1,89 @@
+SWANKY BALLOON CO. — GHL A2P RESUBMISSION PACKET
+Prepared November 24, 2026
+
+STATUS
+Website changes deployed to https://swanky-balloon-co.vercel.app on November 24, 2026. Type checking, production build and 14 desktop/mobile consent tests passed. The rejected GHL fields and live workflows still require verification.
+
+LIVE VERIFICATION: The deployed Vercel /inquire, /privacy and /terms pages returned HTTP 200. The live inquiry was followed through all four steps without submitting. Both SMS boxes were unchecked and mobile had no horizontal overflow. Evidence screenshots: docs/a2p-evidence/production-opt-in-desktop.png and production-opt-in-mobile.png. These show the confirmed production website.
+
+CONFIRMED WEBSITE: The owner confirmed https://swanky-balloon-co.vercel.app as the production website. Use this origin for the registration, opt-in proof and policy links. No custom-domain change is needed. The previous swankyballoon.com references were stale. Do not describe this as an approved campaign or paste a mixed-use submission into an informational-only campaign.
+
+PRIMARY DRAFT: INQUIRY/BOOKING UPDATES + PROMOTIONS
+Use this draft only if both categories are actually intended. Select the supported mixed use case covering customer care/booking notifications and marketing; confirm the exact available option and any locked fields in GHL before resubmitting. Do not assume Low Volume Mixed eligibility or change the business identity to match an example.
+
+CAMPAIGN DESCRIPTION — paste into the description field
+Swanky Balloon Co. LLC provides balloon decor and event styling in Middle Tennessee. We send texts to people who submit an inquiry at https://swanky-balloon-co.vercel.app/inquire and explicitly select the applicable SMS consent checkbox. Inquiry texts include replies to questions, quotes, booking confirmations, reminders and event-day delivery or pickup updates. Separately opted-in marketing subscribers receive recurring special offers, seasonal balloon decor announcements and service promotions. Each message category requires its own optional checkbox; choosing one does not authorize the other. Message frequency varies. Recipients can reply STOP to opt out or HELP for assistance.
+
+SAMPLE MESSAGE 1 — inquiry/customer care
+Swanky Balloon Co. LLC: Hi [First Name], thanks for your balloon decor inquiry for [Event Date]. What time can we access the venue for setup? Reply STOP to opt out.
+
+SAMPLE MESSAGE 2 — promotional
+Swanky Balloon Co. LLC: Planning your next celebration? Explore our balloon decor services at https://swanky-balloon-co.vercel.app/services and request a custom quote. Reply STOP to opt out.
+
+ADDITIONAL SAMPLE — booking reminder, if another field is available
+Swanky Balloon Co. LLC: Hi [First Name], this is a reminder of your balloon installation on [Event Date]. Our arrival window is [Arrival Window]. Reply with any access updates. Reply STOP to opt out.
+
+HOW CONTACTS OPT IN / MESSAGE FLOW — paste into that field
+Customers opt in through our public website inquiry form at https://swanky-balloon-co.vercel.app/inquire. They complete The Event, The Vision and The Investment, then enter their mobile number in step 4, Your Details. They independently select “Text me about my inquiry (optional)” for inquiry and booking messages and/or “Send me offers and inspiration (optional)” for marketing texts, then click Send My Inquiry. Both SMS checkboxes start unchecked and are optional. Customers can select either, both or neither; entering a number or accepting the general inquiry terms alone does not subscribe them to SMS. Each checkbox identifies Swanky Balloon Co. LLC, the message categories, variable frequency, message/data rates, HELP and STOP instructions, and that consent is not a condition of purchase. Privacy Policy and Terms links appear beside the checkboxes. The same disclosures and step-by-step instructions are publicly readable at https://swanky-balloon-co.vercel.app/inquire#text-message-choices. Our website submission includes the separate consent choices, exact accepted disclosure text/version and submission timestamp. Privacy Policy: https://swanky-balloon-co.vercel.app/privacy. Text message terms: https://swanky-balloon-co.vercel.app/terms#text-messages.
+
+This draft describes website opt-in only. If QR codes, paper forms, phone scripts, chat widgets or text-to-join are also used, provide their actual disclosures and evidence so the flow can be expanded accurately. Do not claim keyword or verbal enrollment without an implemented, documented process.
+
+EXACT WEBSITE CHECKBOX WORDING
+Inquiry label: Text me about my inquiry (optional).
+I agree to receive text messages from Swanky Balloon Co. LLC at the mobile number above about my inquiry and booking, including replies, quotes, booking confirmations, reminders and event-day updates. Message frequency varies. Message and data rates may apply. Reply HELP for help or STOP to opt out at any time. Consent is not a condition of purchase.
+Links immediately afterward: Privacy Policy (https://swanky-balloon-co.vercel.app/privacy) and Terms (https://swanky-balloon-co.vercel.app/terms).
+
+Marketing label: Send me offers and inspiration (optional).
+I agree to receive recurring marketing and promotional text messages from Swanky Balloon Co. LLC at the mobile number above, including special offers, seasonal balloon decor announcements and service promotions. Message frequency varies. Message and data rates may apply. Reply HELP for help or STOP to opt out at any time. Consent is not a condition of purchase.
+Links immediately afterward: Privacy Policy (https://swanky-balloon-co.vercel.app/privacy) and Terms (https://swanky-balloon-co.vercel.app/terms).
+
+OPT-IN CONFIRMATION TEMPLATES — configure to match the actual selected categories
+Informational only:
+Swanky Balloon Co. LLC: You're subscribed to inquiry and booking texts. Message frequency varies. Msg & data rates may apply. Reply HELP for help or STOP to opt out.
+
+Marketing only:
+Swanky Balloon Co. LLC: You're subscribed to promotional texts, including special offers and seasonal balloon decor news. Message frequency varies. Msg & data rates may apply. Reply HELP for help or STOP to opt out.
+
+Both:
+Swanky Balloon Co. LLC: You're subscribed to inquiry/booking updates and promotional texts. Message frequency varies. Msg & data rates may apply. Reply HELP for help or STOP to opt out.
+
+Do not send a confirmation when neither box is selected. A single generic GHL confirmation must not claim both subscriptions when only one was selected. Confirm platform capabilities before completing a locked opt-in-message field.
+
+HELP RESPONSE — proposed, verify/configure in GHL
+Swanky Balloon Co. LLC: For help, email swankyballoonco@gmail.com or call (615) 686-5113. Reply STOP to opt out.
+
+STOP RESPONSE — proposed, verify/configure in GHL
+Swanky Balloon Co. LLC: You have been unsubscribed and will receive no further text messages from this program.
+
+Verify provider-managed STOP/HELP handling first to avoid duplicate automatic responses. STOP must suppress both categories for this sending number/program. Do not clear DND simply because a contact submits a new inquiry.
+
+IF THE CAMPAIGN IS INFORMATIONAL ONLY
+Use this alternate description only if promotions will not be sent through this campaign:
+Swanky Balloon Co. LLC sends inquiry and booking text messages to customers who submit the form at https://swanky-balloon-co.vercel.app/inquire and select the optional “Text me about my inquiry” SMS checkbox. Messages include replies to questions, quotes, booking confirmations, reminders and event-day delivery or pickup updates for the customer's balloon decor inquiry or booking. Message frequency varies. This campaign does not send promotional texts. Recipients can reply STOP to opt out or HELP for assistance.
+
+Use the inquiry sample and booking-reminder sample above. In the message-flow field, describe the inquiry checkbox as this campaign's opt-in; state that the separate promotional checkbox does not enroll customers in this campaign. Use the informational-only confirmation. Keep promotional sends disabled unless covered by a suitable approved campaign. Do not use the promotional sample for an informational-only registration.
+
+GHL IMPLEMENTATION CHECKS BEFORE RESUBMISSION
+- Confirm the registered legal name/DBA matches Swanky Balloon Co. LLC and the website; verify business address and support contacts.
+- Retain consent.sms and consent.marketingSms separately, including disclosure, version, submittedAt, inquiry ID and source URL. The website emits these disclosures, but GHL retention is not verified yet.
+- Route informational texts using informational permission and promotions using marketing permission. sms-opt-in and sms-marketing-opt-in tags alone are not an authoritative consent history.
+- Confirm production GHL_WEBHOOK_URL is configured; the repository supports a demo mode with no delivery when it is absent.
+- Verify current DND/opt-out status before every send. A form submission must not automatically remove an existing opt-out.
+- Confirm sample-message link/phone-number flags accurately reflect the campaign's actual messages. The promotional sample includes a full HTTPS link; HELP includes a support phone number. Review the field definitions in the actual GHL screen.
+- Verify both checkbox combinations and neither can submit. Use intercepted submissions for website QA; use a controlled internal contact for any GHL delivery test, with explicit authorization to send test texts.
+- Verify the published inquiry, Privacy and Terms URLs without login on desktop and mobile. Capture the actual fourth-step form with both unchecked boxes and links. Upload that production screenshot to GHL Media Storage and add its public share URL as supporting evidence. The overview is explanatory content, not a separate opt-in form.
+- Recheck the selected use case, description, samples, flow and evidence together. If a required field is locked, inspect GHL's required-fix guidance before deciding whether a replacement campaign is necessary.
+
+NEEDED FROM THE REJECTED CAMPAIGN
+1. Exact selected use case/campaign type and campaign description.
+2. All submitted sample messages.
+3. Full “How do contacts opt in?” / message-flow text and supplied proof URLs.
+4. Opt-in confirmation, HELP/STOP wording, and link/phone-number checkbox settings.
+5. Registered brand/DBA, website URL and campaign ID (no EIN or passwords needed).
+6. Expanded “View required fixes” details for both failures and any locked fields.
+7. Confirm whether this campaign will send promotions as well as booking/inquiry texts, and whether any opt-in methods besides the website are used.
+
+REFERENCE
+HighLevel A2P 10DLC Campaign Approval Best Practices:
+https://help.gohighlevel.com/support/solutions/articles/48001229784-a2p-10dlc-campaign-approval-best-practices
+Approval is decided by carriers/registration partners; these corrections do not guarantee approval.

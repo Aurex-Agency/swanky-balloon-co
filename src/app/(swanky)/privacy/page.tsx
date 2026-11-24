@@ -24,7 +24,7 @@ export default function Privacy() {
         <p>
           This Privacy Policy explains how {brand.legalName} (“Swanky,” “we,”
           “us”) collects, uses, shares and protects information when you visit
-          swankyballoon.com or swanky-balloon-co.vercel.app, send us an inquiry,
+          swanky-balloon-co.vercel.app, send us an inquiry,
           or talk with us by email, phone or text message.
         </p>
 
